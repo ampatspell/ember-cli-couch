@@ -2,5 +2,8 @@
 'use strict';
 
 module.exports = {
-  name: 'couch'
+  name: 'couch',
+  isDevelopingAddon() {
+    return true;
+  }
 };
