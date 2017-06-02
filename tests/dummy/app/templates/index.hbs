@@ -1,3 +1,27 @@
 <div class="block">
   ember-cli-couch
 </div>
+<div class="block">
+  <div>Database: {{model.database.db_name}}</div>
+  <div>URL: {{db.url}}</div>
+  <div>CouchDB: v{{model.couch.version}}</div>
+  <div>Session:
+    {{#with model.session.userCtx.name as |name|}}
+      {{#if name}}
+        {{name}}
+      {{else}}
+        Not logged in
+      {{/if}}
+    {{/with}}
+  </div>
+</div>
+<div class="block">
+  <div>{{db}}</div>
+  <div>{{db.couch}}</div>
+  <div>{{db.couch.couches}}</div>
+</div>
+<div class="block">
+  <div>{{model.message._id}} / {{model.message._rev}}</div>
+  <div class='strong'>{{model.message.message}}</div>
+  <div>— {{model.message.author}}</div>
+</div>
