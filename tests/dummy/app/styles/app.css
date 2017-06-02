@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext');
+
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: "Ubuntu Mono";
+  font-size: 15px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+*[data-ember-action] {
+  cursor: pointer;
+}
+
+a {
+  color: #000;
+}
+
+.strong {
+  font-weight: bold;
+}
+
+.block {
+  padding: 10px 20px;
+}
+
+  .block:first-child {
+    padding-top: 20px;
+  }
+
+  .block:last-child {
+    padding-bottom: 20px;
+  }
