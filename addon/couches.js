@@ -11,7 +11,8 @@ export default Ember.Service.extend({
   openCouches: object().readOnly(),
 
   createCouch(url) {
-    return getOwner(this).factoryFor('couch:couch').create({ url });
+    let couches = this;
+    return getOwner(this).factoryFor('couch:couch').create({ couches, url });
   },
 
   couch({ url }) {

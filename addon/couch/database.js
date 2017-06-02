@@ -84,7 +84,7 @@ export default Ember.Object.extend({
         rev: opts.rev,
       },
       json: true
-    }).then(null, null, 'sofa:database load');
+    });
   },
 
   _loadAttachment(attachment) {
@@ -150,7 +150,7 @@ export default Ember.Object.extend({
         data.reload = true;
       }
       return data;
-    }, null, 'sofa:database save');
+    });
   },
 
   delete(id, rev, opts={}) {
@@ -164,7 +164,7 @@ export default Ember.Object.extend({
         rev: rev
       },
       json: true
-    }).then(null, null, 'sofa:database delete document');
+    });
   },
 
   _view(url, opts) {
@@ -193,18 +193,18 @@ export default Ember.Object.extend({
         reduce:           opts.reduce,
         inclusive_end:    opts.inclusive_end,
       }
-    }).then(null, null, 'sofa:database _view');
+    });
   },
 
   view(ddoc, name, opts) {
     assert(`ddoc must be string not ${ddoc}`, typeOf(ddoc) === 'string');
     assert(`name must be string not ${name}`, typeOf(name) === 'string');
     let url = `_design/${ddoc}/_view/${name}`;
-    return this._view(url, opts).then(null, null, 'sofa:database view');
+    return this._view(url, opts);
   },
 
   all(opts) {
-    return this._view('_all_docs', opts).then(null, null, 'sofa:database all');
+    return this._view('_all_docs', opts);
   },
 
   willDestroy() {
@@ -213,6 +213,10 @@ export default Ember.Object.extend({
     this.get('database').destroy();
     this.get('mango').destroy();
     this._super();
+  },
+
+  toStringExtension() {
+    return this.get('name');
   }
 
 });

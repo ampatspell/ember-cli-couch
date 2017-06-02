@@ -4,9 +4,7 @@ import { destroyObject } from './util/destroy';
 
 const {
   computed,
-  getOwner,
-  assert,
-  typeOf
+  getOwner
 } = Ember;
 
 const normalizedUrl = () => {
@@ -30,7 +28,9 @@ const session = () => {
 
 export default Ember.Object.extend({
 
+  couches: null,
   url: null,
+
   normalizedUrl: normalizedUrl(),
 
   openDatabases: object(),
@@ -43,7 +43,6 @@ export default Ember.Object.extend({
 
   request(opts) {
     let url = this.get("normalizedUrl");
-    assert("Extend sofa Store and set url property", typeOf(url) !== 'null');
     opts = opts || {};
     opts.url = opts.url ? [url, opts.url].join('') : url;
     return this.get('_request').send(opts);
@@ -53,7 +52,7 @@ export default Ember.Object.extend({
     return this.request({
       type: 'get',
       json: true
-    }).then(null, null, 'sofa:couch info');
+    });
   },
 
   uuids(count) {
@@ -64,7 +63,7 @@ export default Ember.Object.extend({
         count: count || 1
       },
       json: true
-    }).then(null, null, 'sofa:couch uuids');
+    });
   },
 
   createDatabase(name) {
@@ -104,6 +103,11 @@ export default Ember.Object.extend({
     this._destroyOpenDatabases();
     this._destroySession();
     this._super();
+  },
+
+  toStringExtension() {
+    return this.get('normalizedUrl');
   }
+
 
 });

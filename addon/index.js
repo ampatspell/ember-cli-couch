@@ -1,5 +1,5 @@
-import Couches from './couches';
+import { registerDatabaseServices } from './util/register-database-services';
 
 export {
-  Couches
+  registerDatabaseServices
 }
