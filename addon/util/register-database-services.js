@@ -16,7 +16,8 @@ registerDatabaseServices(app, {
   db: {
     url: 'http://127.0.0.1:5984',
     name: 'thing'
-  }
+  },
+  ...
 });
 */
 export function registerDatabaseServices(app, hash) {
