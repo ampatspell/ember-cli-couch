@@ -8,7 +8,6 @@ const {
 export default {
   name: 'dummy:dev',
   initialize(app) {
-
     registerDatabaseServices(app, {
       db: {
         url: 'http://127.0.0.1:5984',
