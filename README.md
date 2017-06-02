@@ -98,3 +98,11 @@ couches
       view(ddoc, name, opts)
       all(opts)
 ```
+
+## Dummy
+
+See dummy for usage examples and play with `window.db`:
+
+``` javascript
+> db.load('first').then(log)
+```
