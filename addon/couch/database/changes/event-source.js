@@ -1,4 +1,5 @@
 import Listener from './listener';
+import Error from '../../../util/error';
 
 /*
 
@@ -52,7 +53,7 @@ export default class LongPollingListener extends Listener {
     if(state === e.target.OPEN) {
       return;
     }
-    super.onError();
+    super.onError(new Error({ error: 'unknown', reason: 'event source' }));
   }
 
   onHeartbeat() {

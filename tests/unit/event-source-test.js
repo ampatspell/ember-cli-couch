@@ -77,8 +77,8 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
         onData(listener_, json) {
           events.push({ type: 'data', json });
         },
-        onError() {
-          events.push({ type: 'error' });
+        onError(listener_, err) {
+          events.push({ type: 'error', err: err.toJSON() });
         }
       };
       listener.start();
@@ -89,7 +89,13 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       assert.equal(listener.started, true);
       assert.equal(listener.open, false);
       assert.deepEqual(events, [
-        { type: 'error' }
+        {
+          type: 'error',
+          err: {
+            error: 'unknown',
+            reason: 'event source'
+          }
+        }
       ]);
     }).finally(() => {
       listener.stop();
