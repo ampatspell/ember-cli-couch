@@ -213,6 +213,7 @@ export default Ember.Object.extend({
     this.get('design').destroy();
     this.get('database').destroy();
     this.get('mango').destroy();
+    this.get('changes').destroy();
     this._super();
   },
 
