@@ -27,7 +27,7 @@ export default {
     container.register('couch:database-design', Design);
     container.register('couch:database-mango', Mango);
     container.register('couch:database-changes', DatabaseChanges);
-    container.register('couch:catabase-changes/source/event-source', ChangesSourceEventSource);
-    container.register('couch:catabase-changes/source/long-polling', ChangesSourceLongPolling);
+    container.register('couch:database-changes/source/event-source', ChangesSourceEventSource);
+    container.register('couch:database-changes/source/long-polling', ChangesSourceLongPolling);
   }
 };

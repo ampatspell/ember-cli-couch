@@ -16,7 +16,7 @@ export default Ember.Object.extend({
   source: null,
 
   _lookupSourceClass(type) {
-    let factory = getOwner(this).factoryFor(`couch:catabase-changes/source/${type}`);
+    let factory = getOwner(this).factoryFor(`couch:database-changes/source/${type}`);
     assert(`changes listener source named '${type}' is not registered`, !!factory);
     return factory.class;
   },
