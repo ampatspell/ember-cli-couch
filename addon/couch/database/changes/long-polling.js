@@ -49,13 +49,6 @@ export default class LongPollingListener extends Listener {
     this.poll();
   }
 
-  onError(e) {
-    // if(err.status === 404 && err.error === 'not_found' && err.reason === 'no_db_file') {
-    //   return;
-    // }
-    super.onError(e);
-  }
-
   onMessage(message) {
     let { results /* last_seq */ } = message;
     A(results).forEach(result => {

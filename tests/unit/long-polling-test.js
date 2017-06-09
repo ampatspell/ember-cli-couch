@@ -28,9 +28,7 @@ configurations(({ module, test, createDatabase }) => {
 
   module('long-polling', () => {
     flush();
-    return cleanup(db).then(() => {
-      return logout(db);
-    });
+    return cleanup(db);
   });
 
   test('listen save and delete', assert => {
