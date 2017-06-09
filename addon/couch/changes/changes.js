@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import assert from '../../../util/assert';
+import assert from '../../util/assert';
 
 const {
   on,
@@ -9,8 +9,6 @@ const {
 } = Ember;
 
 export default Ember.Object.extend({
-
-  database: null,
 
   type: 'event-source',
   enabled: false,
