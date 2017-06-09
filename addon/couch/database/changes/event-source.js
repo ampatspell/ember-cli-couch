@@ -79,6 +79,7 @@ export default class EventSourceListener {
       return;
     }
     this.open = false;
+    this.notify('onError');
   }
 
   onHeartbeat() {
