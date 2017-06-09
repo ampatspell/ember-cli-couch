@@ -8,6 +8,9 @@ import Security from 'couch/couch/database/security';
 import Design from 'couch/couch/database/design';
 import DatabaseDatabase from 'couch/couch/database/database';
 import Mango from 'couch/couch/database/mango';
+import Changes from 'couch/couch/database/changes/changes';
+import ChangesSourceEventSource from 'couch/couch/database/changes/source/event-source';
+import ChangesSourceLongPolling from 'couch/couch/database/changes/source/long-polling';
 
 export default {
   name: 'couch:internal',
@@ -22,5 +25,8 @@ export default {
     container.register('couch:database-security', Security);
     container.register('couch:database-design', Design);
     container.register('couch:database-mango', Mango);
+    container.register('couch:database-changes', Changes);
+    container.register('couch:catabase-changes/source/event-source', ChangesSourceEventSource);
+    container.register('couch:catabase-changes/source/long-polling', ChangesSourceLongPolling);
   }
 };

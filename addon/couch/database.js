@@ -35,6 +35,7 @@ export default Ember.Object.extend({
   design:   lookup('couch:database-design'),
   database: lookup('couch:database-database'),
   mango:    lookup('couch:database-mango'),
+  changes:  lookup('couch:database-changes'),
 
   url: computed('couch.url', 'name', function() {
     let url = this.get('couch.url');

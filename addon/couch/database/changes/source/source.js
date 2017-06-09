@@ -79,4 +79,9 @@ export default class Listener {
     this.notify('onData', json);
   }
 
+  destroy() {
+    this.delegate = null;
+    this.stop();
+  }
+
 }
