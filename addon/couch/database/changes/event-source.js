@@ -1,6 +1,8 @@
+import Listener from './listener';
+
 /*
 
-  let listener = new Listener(`${docs.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
+  let listener = new Listener(`${docs.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
   listener.delegate = {
     onData(listener, data) {
       ...
@@ -14,14 +16,11 @@
   listener.stop();
 
 */
-export default class EventSourceListener {
+export default class LongPollingListener extends Listener {
 
   constructor(url) {
-    this.url = url;
-    this.started = false;
-    this.open = false;
+    super(url);
     this.source = null;
-    this.delegate = null;
     this.bound = {
       open: this.onOpen.bind(this),
       error: this.onError.bind(this),
@@ -30,47 +29,22 @@ export default class EventSourceListener {
     };
   }
 
-  notify(name, ...args) {
-    let delegate = this.delegate;
-    if(!delegate) {
-      return;
-    }
-    let fn = delegate[name];
-    if(!fn) {
-      return;
-    }
-    fn.call(delegate, this, ...args);
-  }
-
-  start() {
-    if(this.started) {
-      return;
-    }
+  _start() {
     /* global EventSource */
     let source = new EventSource(this.url, { withCredentials: true });
     for(let key in this.bound) {
       source.addEventListener(key, this.bound[key], false);
     }
     this.source = source;
-    this.started = true;
   }
 
-  stop() {
-    if(!this.started) {
-      return;
-    }
+  _stop() {
     let source = this.source;
     source.close();
     for(let key in this.bound) {
       source.removeEventListener(key, this.bound[key], false);
     }
     this.source = null;
-    this.started = false;
-    this.open = false;
-  }
-
-  onOpen() {
-    this.open = true;
   }
 
   onError(e) {
@@ -78,15 +52,10 @@ export default class EventSourceListener {
     if(state === e.target.OPEN) {
       return;
     }
-    this.open = false;
-    this.notify('onError');
+    super.onError();
   }
 
   onHeartbeat() {
-  }
-
-  onData(json) {
-    this.notify('onData', json);
   }
 
   onMessage(message) {
