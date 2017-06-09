@@ -1,23 +1,7 @@
-import Listener from './listener';
-import Error from '../../../util/error';
+import Source from './source';
+import Error from '../../../../util/error';
 
-/*
-
-  let listener = new Listener(`${docs.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
-  listener.delegate = {
-    onData(listener, data) {
-      ...
-    }
-  }
-
-  listener.start()
-
-  ...
-
-  listener.stop();
-
-*/
-export default class LongPollingListener extends Listener {
+export default class LongPollingSource extends Source {
 
   constructor(url) {
     super(url);

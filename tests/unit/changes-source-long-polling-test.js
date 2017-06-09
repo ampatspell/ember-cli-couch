@@ -1,7 +1,7 @@
 import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
-import Listener from 'couch/couch/database/changes/event-source';
+import Source from 'couch/couch/database/changes/source/long-polling';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations(({ module, test, createDatabase }) => {
 
   let db;
 
@@ -26,24 +26,22 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
   }
 
-  module('event-source', () => {
+  module('changes-source-long-polling', () => {
     flush();
-    return cleanup(db).then(() => {
-      return logout(db);
-    });
+    return cleanup(db);
   });
 
   test('listen save and delete', assert => {
-    let listener = new Listener(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
+    let source = new Source(`${db.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
     let data = [];
-    listener.delegate = {
-      onData(listener_, json) {
-        assert.ok(listener_ === listener);
+    source.delegate = {
+      onData(source_, json) {
+        assert.ok(source_ === source);
         data.push(json);
       }
     };
-    listener.start();
-    assert.equal(listener.started, true);
+    source.start();
+    assert.equal(source.started, true);
     return wait().then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
@@ -51,8 +49,8 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(() => {
       return wait();
     }).then(() => {
-      assert.equal(listener.open, true);
-      listener.stop();
+      assert.equal(source.open, true);
+      source.stop();
       assert.deepEqual_(data.map(row => row.doc), [
         {
           "_id": "foo",
@@ -69,36 +67,37 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   });
 
   test('listen protected database', assert => {
-    let listener;
+    let source;
     let events = [];
     return protect(db).then(() => {
-      listener = new Listener(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
-      listener.delegate = {
-        onData(listener_, json) {
+      source = new Source(`${db.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
+      source.delegate = {
+        onData(source_, json) {
           events.push({ type: 'data', json });
         },
         onError(listener_, err) {
           events.push({ type: 'error', err: err.toJSON() });
         }
       };
-      listener.start();
-      assert.equal(listener.started, true);
-      assert.equal(listener.open, false);
-      return wait(null, 1000);
+      source.start();
+      assert.equal(source.started, true);
+      assert.equal(source.open, true);
+      return wait(null, 3000);
     }).then(() => {
-      assert.equal(listener.started, true);
-      assert.equal(listener.open, false);
+      assert.equal(source.started, true);
+      assert.equal(source.open, false);
       assert.deepEqual(events, [
         {
           type: 'error',
           err: {
-            error: 'unknown',
-            reason: 'event source'
-          }
+            "error": "unauthorized",
+            "reason": "You are not authorized to access this db.",
+            "status": 401
+          },
         }
       ]);
     }).finally(() => {
-      listener.stop();
+      source.stop();
     });
   });
 

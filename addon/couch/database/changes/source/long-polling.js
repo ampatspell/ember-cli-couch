@@ -1,6 +1,6 @@
 import Ember from 'ember';
-import Listener from './listener';
-import { request } from '../../request';
+import Source from './source';
+import { request } from '../../../request';
 
 const {
   A,
@@ -8,7 +8,7 @@ const {
   RSVP: { resolve }
 } = Ember;
 
-export default class LongPollingListener extends Listener {
+export default class LongPollingSource extends Source {
 
   constructor(url) {
     super(url);

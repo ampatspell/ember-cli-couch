@@ -1,3 +1,23 @@
+/*
+
+  let source = new Source(`${docs.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
+
+  source.delegate = {
+    onData(source, data) {
+      ...
+    }
+    onError(source, err) {
+      ...
+    }
+  }
+
+  source.start()
+
+  ...
+
+  source.stop();
+
+*/
 export default class Listener {
 
   constructor(url) {
