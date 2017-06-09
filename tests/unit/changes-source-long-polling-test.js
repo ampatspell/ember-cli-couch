@@ -47,7 +47,7 @@ configurations(({ module, test, createDatabase }) => {
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait();
+      return wait(null, 3000);
     }).then(() => {
       assert.equal(source.open, true);
       source.stop();
