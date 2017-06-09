@@ -33,7 +33,7 @@ export default Ember.Object.extend({
     let source = this.get('source');
     if(type && enabled) {
       if(source) {
-        if(source.get('type') === type) {
+        if(source.type === type) {
           return;
         }
         source.destroy();
