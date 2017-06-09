@@ -1,5 +1,5 @@
 import { configurations, cleanup, next } from '../helpers/setup';
-import SourceEventSource from 'couch/couch/database/changes/source/event-source';
+import SourceEventSource from 'couch/couch/changes/source/event-source';
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 

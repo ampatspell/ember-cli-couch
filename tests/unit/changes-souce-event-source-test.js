@@ -1,5 +1,5 @@
 import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
-import Source from 'couch/couch/database/changes/source/event-source';
+import Source from 'couch/couch/changes/source/event-source';
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 

@@ -1,5 +1,5 @@
 import Source from './source';
-import Error from '../../../../util/error';
+import Error from '../../../util/error';
 
 export default class LongPollingSource extends Source {
 

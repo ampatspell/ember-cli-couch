@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Source from './source';
-import { request } from '../../../request';
+import { request } from '../../request';
 
 const {
   A,

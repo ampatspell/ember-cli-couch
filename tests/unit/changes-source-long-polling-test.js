@@ -1,5 +1,5 @@
 import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
-import Source from 'couch/couch/database/changes/source/long-polling';
+import Source from 'couch/couch/changes/source/long-polling';
 
 configurations(({ module, test, createDatabase }) => {
 

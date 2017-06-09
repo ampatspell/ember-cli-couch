@@ -9,8 +9,9 @@ import Design from 'couch/couch/database/design';
 import DatabaseDatabase from 'couch/couch/database/database';
 import Mango from 'couch/couch/database/mango';
 import Changes from 'couch/couch/database/changes/changes';
-import ChangesSourceEventSource from 'couch/couch/database/changes/source/event-source';
-import ChangesSourceLongPolling from 'couch/couch/database/changes/source/long-polling';
+
+import ChangesSourceEventSource from 'couch/couch/changes/source/event-source';
+import ChangesSourceLongPolling from 'couch/couch/changes/source/long-polling';
 
 export default {
   name: 'couch:internal',
