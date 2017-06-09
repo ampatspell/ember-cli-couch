@@ -41,6 +41,7 @@ export default Ember.Object.extend({
         source.destroy();
       }
       source = this._createSource(type);
+      source.delegate = this;
       this.set('source', source);
       source.start();
     } else {
@@ -67,6 +68,16 @@ export default Ember.Object.extend({
     if(source) {
       source.destroy();
     }
+  },
+
+  //
+
+  onData(source, json) {
+    Ember.Logger.info(json);
+  },
+
+  onError(source, err) {
+    Ember.Logger.error(err);
   }
 
 });
