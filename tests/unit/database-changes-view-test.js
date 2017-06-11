@@ -17,6 +17,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
   module('database-changes-view', () => {
     flush();
+    /* global emit */
     return cleanup(db).then(() => {
       return db.get('design').save('changes', {
         views: {
@@ -39,7 +40,6 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       view: 'changes/only-things',
       enabled: true
     });
-    debugger;
     changes.on('data', doc => {
       data.push(doc);
     });
@@ -48,12 +48,11 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
         db.save({ _id: 'foo', type: 'thing' }),
         db.save({ _id: 'bar', type: 'duck' })
       ]);
-    }).then(([ foo, bar ]) => {
+    }).then(([ foo ]) => {
       return db.save({ _id: 'foo', _rev: foo.rev, _deleted: true, type: 'thing' });
     }).then(() => {
       return wait(null, 2000);
     }).then(() => {
-      console.log(data);
       assert.deepEqual_(data, [
         {
           "_id": "foo",

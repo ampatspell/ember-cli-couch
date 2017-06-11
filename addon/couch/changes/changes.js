@@ -56,7 +56,6 @@ export default (...deps) => {
     }),
 
     _sourceDependenciesDidChange: observer('feed', 'enabled', ...deps, function() {
-      console.log('deps did change');
       cancel(this.__updateFeed);
       this.__updateFeed = next(() => this._updateFeed());
     }),

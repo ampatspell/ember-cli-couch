@@ -50,7 +50,9 @@ configurations(({ module, test, createDatabase, config }) => {
     assert.deepEqual(changes._feedOptions(), {
       url: `${config.url}/${config.name}/_changes`,
       qs: {
-        include_docs: true
+        include_docs: true,
+        filter: undefined,
+        view: undefined
       }
     });
   });
