@@ -49,15 +49,15 @@ export default Ember.Object.extend({
       components.push(url);
     }
     if(name) {
-      components.push(name);
+      components.push(encodeURIComponent(name));
     }
     return components.join('/');
   }).readOnly(),
 
   request(opts) {
     opts = opts || {};
-    let name = this.get('name');
-    opts.url = opts.url ? `${encodeURIComponent(name)}/${opts.url}` : name;
+    let name = encodeURIComponent(this.get('name'));
+    opts.url = opts.url ? `${name}/${opts.url}` : name;
     return this.get('couch').request(opts);
   },
 
