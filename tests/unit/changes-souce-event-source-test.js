@@ -53,7 +53,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait();
+      return wait(null, 1000);
     }).then(() => {
       assert.equal(source.open, true);
       source.stop();

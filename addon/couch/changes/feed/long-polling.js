@@ -3,7 +3,6 @@ import Feed from './feed';
 import { request } from '../../request';
 
 const {
-  A,
   run: { next, cancel },
   RSVP: { resolve }
 } = Ember;
@@ -51,10 +50,7 @@ export default class LongPollingFeed extends Feed {
   }
 
   onMessage(message) {
-    let { results /* last_seq */ } = message;
-    A(results).forEach(result => {
-      this.onData(result);
-    });
+    this.onData(message);
   }
 
 }

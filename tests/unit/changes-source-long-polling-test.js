@@ -1,5 +1,5 @@
 import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
-import Feed from 'couch/couch/changes/feed/long-polling';
+import Feed from 'couch/couch/database/changes-feed/long-polling';
 
 configurations(({ module, test, createDatabase }) => {
 
@@ -35,8 +35,7 @@ configurations(({ module, test, createDatabase }) => {
     let source = new Feed({
       url: `${db.get('url')}/_changes`,
       qs: {
-        include_docs: true,
-        since: 'now'
+        include_docs: true
       }
     });
     let data = [];
@@ -53,11 +52,11 @@ configurations(({ module, test, createDatabase }) => {
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait(null, 3000);
+      return wait(null, 100);
     }).then(() => {
       assert.equal(source.open, true);
       source.stop();
-      assert.deepEqual_(data.map(row => row.doc), [
+      assert.deepEqual_(data, [
         {
           "_id": "foo",
           "_rev": "ignored",
@@ -79,8 +78,7 @@ configurations(({ module, test, createDatabase }) => {
       source = new Feed({
         url: `${db.get('url')}/_changes`,
         qs: {
-          include_docs: true,
-          since: 'now'
+          include_docs: true
         }
       });
       source.delegate = {
@@ -94,7 +92,7 @@ configurations(({ module, test, createDatabase }) => {
       source.start();
       assert.equal(source.started, true);
       assert.equal(source.open, true);
-      return wait(null, 3000);
+      return wait(null, 100);
     }).then(() => {
       assert.equal(source.started, true);
       assert.equal(source.open, false);

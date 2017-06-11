@@ -76,14 +76,12 @@ export default Ember.Object.extend(Evented, {
     }
   },
 
-  //
-
-  onData(feed, json) {
-    Ember.Logger.info(json);
+  onData(feed, data) {
+    this.trigger('data', data);
   },
 
   onError(feed, err) {
-    Ember.Logger.error(err);
+    this.trigger('error', err);
   }
 
 });

@@ -1,7 +1,7 @@
 import { configurations, cleanup, next } from '../helpers/setup';
 import EventSourceFeed from 'couch/couch/database/changes-feed/event-source';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase, config }) => {
+configurations(({ module, test, createDatabase, config }) => {
 
   let db;
   let changes;
