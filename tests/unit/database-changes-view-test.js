@@ -44,7 +44,7 @@ configurations(({ module, test, createDatabase, config }) => {
     changes.on('data', doc => {
       data.push(doc);
     });
-    return wait().then(() => {
+    return wait(null, 1000).then(() => {
       return all([
         db.save({ _id: 'foo', type: 'thing' }),
         db.save({ _id: 'bar', type: 'duck' })
