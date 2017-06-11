@@ -16,8 +16,12 @@ export default (...deps) => base(...deps).extend({
   suspended: gt('_suspended', 0).readOnly(),
 
   _trigger(...args) {
-    this.get('_queue').pushObject(args);
-    this._enqueueFlush();
+    if(this.get('_suspended') === 0 && this.get('_queue.length') === 0) {
+      this.trigger(...args);
+    } else {
+      this.get('_queue').pushObject(args);
+      this._enqueueFlush();
+    }
   },
 
   _enqueueFlush() {
