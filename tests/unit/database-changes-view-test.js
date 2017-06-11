@@ -5,7 +5,7 @@ const {
   RSVP: { all }
 } = Ember;
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations(({ module, test, createDatabase, config }) => {
 
   let db;
   let changes;
@@ -13,6 +13,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   function flush() {
     db = createDatabase();
     changes = db.get('changes');
+    changes.set('feed', config.feed);
   }
 
   module('database-changes-view', () => {
@@ -51,7 +52,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(([ foo ]) => {
       return db.save({ _id: 'foo', _rev: foo.rev, _deleted: true, type: 'thing' });
     }).then(() => {
-      return wait(null, 2000);
+      return wait(null, 3000);
     }).then(() => {
       assert.deepEqual_(data, [
         {

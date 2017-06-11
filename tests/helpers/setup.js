@@ -14,11 +14,13 @@ const {
 const configs = {
   '1.6': {
     url: '/api/1.6',
-    name: 'ember-cli-couch'
+    name: 'ember-cli-couch',
+    feed: 'event-source'
   },
   '2.0': {
     url: '/api/2.0',
-    name: 'ember-cli-couch'
+    name: 'ember-cli-couch',
+    feed: 'long-polling'
   }
 };
 
