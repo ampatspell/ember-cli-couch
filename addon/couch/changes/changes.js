@@ -5,76 +5,79 @@ const {
   on,
   observer,
   getOwner,
-  run: { next, cancel }
+  run: { next, cancel },
+  Evented
 } = Ember;
 
-export default Ember.Object.extend({
+export default Ember.Object.extend(Evented, {
 
-  type: 'event-source',
   enabled: false,
+  feed: 'event-source',
 
-  source: null,
+  _feedFactoryName() {
+    assert({ error: 'internal', reason: 'override Changes._feedFactoryName' }, false);
+  },
 
-  _lookupSourceClass(type) {
-    let factory = getOwner(this).factoryFor(`couch:changes-source/${type}`);
-    assert(`changes listener source named '${type}' is not registered`, !!factory);
+  _lookupFeedClass(feed) {
+    let name = this._feedFactoryName(feed);
+    let factory = getOwner(this).factoryFor(name);
+    assert(`changes feed factory named '${name}' is not registered`, !!factory);
     return factory.class;
   },
 
-  _createSource(type) {
-    let Class = this._lookupSourceClass(type);
+  _createFeed(feed) {
+    let Class = this._lookupFeedClass(feed);
     let instance = new Class();
-    instance._changesType = type;
+    instance._feed = feed;
     return instance;
   },
 
-  _updateSource() {
-    let { type, enabled } = this.getProperties('type', 'enabled');
-    let source = this.get('source');
-    if(type && enabled) {
-      if(source) {
-        if(source._changesType === type) {
+  _updateFeed() {
+    let { feed, enabled, _feed } = this.getProperties('feed', 'enabled', '_feed');
+    if(feed && enabled) {
+      if(_feed) {
+        if(_feed._feed === feed) {
           return;
         }
-        source.destroy();
+        _feed.destroy();
       }
-      source = this._createSource(type);
-      source.delegate = this;
-      this.set('source', source);
-      source.start();
+      _feed = this._createFeed(feed);
+      _feed.delegate = this;
+      this.set('_feed', _feed);
+      _feed.start();
     } else {
-      if(!source) {
+      if(!_feed) {
         return;
       }
-      source.destroy();
-      this.set('source', null);
+      _feed.destroy();
+      this.set('_feed', null);
     }
   },
 
   _setSource: on('init', function() {
-    this._updateSource();
+    this._updateFeed();
   }),
 
-  _sourceDependenciesDidChange: observer('type', 'enabled', function() {
-    cancel(this.__updateSource);
-    this.__updateSource = next(() => this._updateSource());
+  _sourceDependenciesDidChange: observer('feed', 'enabled', function() {
+    cancel(this.__updateFeed);
+    this.__updateFeed = next(() => this._updateFeed());
   }),
 
   willDestroy() {
-    cancel(this.__updateSource);
-    let source = this.get('source');
-    if(source) {
-      source.destroy();
+    cancel(this.__updateFeed);
+    let _feed = this.get('_feed');
+    if(_feed) {
+      _feed.destroy();
     }
   },
 
   //
 
-  onData(source, json) {
+  onData(feed, json) {
     Ember.Logger.info(json);
   },
 
-  onError(source, err) {
+  onError(feed, err) {
     Ember.Logger.error(err);
   }
 

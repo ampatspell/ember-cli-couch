@@ -1,24 +1,24 @@
 /*
 
-  let source = new Source(`${docs.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
+  let feed = new Feed(`http://127.0.0.1:5984/thing/_changes?feed=longpoll&include_docs=true&since=now`);
 
-  source.delegate = {
-    onData(source, data) {
+  feed.delegate = {
+    onData(f, data) {
       ...
     }
-    onError(source, err) {
+    onError(f, err) {
       ...
     }
   }
 
-  source.start()
+  feed.start()
 
   ...
 
-  source.stop();
+  feed.stop();
 
 */
-export default class Listener {
+export default class Feed {
 
   constructor(url) {
     this.url = url;

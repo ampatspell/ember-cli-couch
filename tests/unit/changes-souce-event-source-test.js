@@ -1,5 +1,5 @@
 import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
-import Source from 'couch/couch/changes/source/event-source';
+import Feed from 'couch/couch/changes/feed/event-source';
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
@@ -32,7 +32,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   });
 
   test('listen save and delete', assert => {
-    let source = new Source(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
+    let source = new Feed(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
     let data = [];
     source.delegate = {
       onData(source_, json) {
@@ -70,7 +70,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     let source;
     let events = [];
     return protect(db).then(() => {
-      source = new Source(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
+      source = new Feed(`${db.get('url')}/_changes?feed=eventsource&include_docs=true&since=now`);
       source.delegate = {
         onData(source_, json) {
           events.push({ type: 'data', json });

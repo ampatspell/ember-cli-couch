@@ -1,7 +1,7 @@
-import Source from './source';
+import Feed from './feed';
 import Error from '../../../util/error';
 
-export default class LongPollingSource extends Source {
+export default class LongPollingFeed extends Feed {
 
   constructor(url) {
     super(url);

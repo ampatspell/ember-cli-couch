@@ -1,5 +1,5 @@
 import { configurations, cleanup, next } from '../helpers/setup';
-import SourceEventSource from 'couch/couch/changes/source/event-source';
+import EventSourceFeed from 'couch/couch/database/changes-feed/event-source';
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
@@ -20,29 +20,29 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     assert.ok(db.get('changes'));
   });
 
-  test('database changes is by default disabled, type is event source', assert => {
+  test('database changes is by default disabled, feed is event source', assert => {
     assert.ok(!db.get('changes.enabled'));
-    assert.ok(db.get('changes.type') === 'event-source');
+    assert.ok(db.get('changes.feed') === 'event-source');
   });
 
-  test('lookup source class', assert => {
-    let Class = db.get('changes')._lookupSourceClass('event-source');
+  test('lookup feed class', assert => {
+    let Class = db.get('changes')._lookupFeedClass('event-source');
     assert.ok(Class);
-    assert.ok(Class === SourceEventSource);
+    assert.ok(Class === EventSourceFeed);
   });
 
-  test('on changes enabled, source is set and unset on disabled', assert => {
+  test('on changes enabled, feed is set and unset on disabled', assert => {
     changes.set('enabled', true);
     return next().then(() => {
-      assert.ok(changes.get('source'));
+      assert.ok(changes.get('_feed'));
       changes.set('enabled', false);
       return next();
     }).then(() => {
-      assert.ok(!changes.get('source'));
+      assert.ok(!changes.get('_feed'));
       changes.set('enabled', true);
       return next();
     }).then(() => {
-      assert.ok(changes.get('source'));
+      assert.ok(changes.get('_feed'));
     });
   });
 

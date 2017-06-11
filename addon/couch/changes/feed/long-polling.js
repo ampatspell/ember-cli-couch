@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import Source from './source';
+import Feed from './feed';
 import { request } from '../../request';
 
 const {
@@ -8,12 +8,7 @@ const {
   RSVP: { resolve }
 } = Ember;
 
-export default class LongPollingSource extends Source {
-
-  constructor(url) {
-    super(url);
-    this.source = null;
-  }
+export default class LongPollingFeed extends Feed {
 
   poll() {
     this.onOpen();
