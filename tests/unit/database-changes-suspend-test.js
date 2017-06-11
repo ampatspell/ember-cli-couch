@@ -1,9 +1,4 @@
-import Ember from 'ember';
 import { configurations, cleanup, next, wait } from '../helpers/setup';
-
-const {
-  RSVP: { all }
-} = Ember;
 
 configurations(({ module, test, createDatabase, config }) => {
 
@@ -33,7 +28,7 @@ configurations(({ module, test, createDatabase, config }) => {
 
     return wait(null, 1000).then(() => {
       return db.save({ _id: 'one' });
-    }).then((json) => {
+    }).then(() => {
       return db.save({ _id: 'two' });
     }).then(() => {
       assert.deepEqual(data, []);
@@ -41,7 +36,7 @@ configurations(({ module, test, createDatabase, config }) => {
       return next().then(() => next());
     }).then(() => {
       assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two' ]);
-      return db.save({ _id: 'three' }).then(() => next());
+      return db.save({ _id: 'three' }).then(() => next()).then(() => next());
     }).then(() => {
       assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two', 'three' ]);
     });
