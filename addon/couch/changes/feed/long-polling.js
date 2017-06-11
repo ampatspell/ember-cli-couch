@@ -10,6 +10,12 @@ const {
 
 export default class LongPollingFeed extends Feed {
 
+  get qs() {
+    return {
+      feed: 'longpoll'
+    };
+  }
+
   poll() {
     this.onOpen();
 

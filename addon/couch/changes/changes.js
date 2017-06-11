@@ -14,6 +14,10 @@ export default Ember.Object.extend(Evented, {
   enabled: false,
   feed: 'event-source',
 
+  _feedOptions() {
+    assert({ error: 'internal', reason: 'override Changes._feedOptions' }, false);
+  },
+
   _feedFactoryName() {
     assert({ error: 'internal', reason: 'override Changes._feedFactoryName' }, false);
   },
@@ -27,7 +31,8 @@ export default Ember.Object.extend(Evented, {
 
   _createFeed(feed) {
     let Class = this._lookupFeedClass(feed);
-    let instance = new Class();
+    let opts = this._feedOptions();
+    let instance = new Class(opts);
     instance._feed = feed;
     return instance;
   },

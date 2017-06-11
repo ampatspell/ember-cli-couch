@@ -1,3 +1,10 @@
+import Ember from 'ember';
+import { composeURL } from '../../request';
+
+const {
+  merge
+} = Ember;
+
 /*
 
   let feed = new Feed(`http://127.0.0.1:5984/thing/_changes?feed=longpoll&include_docs=true&since=now`);
@@ -20,11 +27,17 @@
 */
 export default class Feed {
 
-  constructor(url) {
-    this.url = url;
+  constructor(opts) {
+    this.opts = opts;
     this.started = false;
     this.open = false;
     this.delegate = null;
+  }
+
+  get url() {
+    let { url, qs } = this.opts;
+    qs = merge(this.qs || {}, qs);
+    return composeURL(url, qs);
   }
 
   notify(name, ...args) {

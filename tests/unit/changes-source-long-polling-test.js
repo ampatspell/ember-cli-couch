@@ -32,7 +32,13 @@ configurations(({ module, test, createDatabase }) => {
   });
 
   test('listen save and delete', assert => {
-    let source = new Feed(`${db.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
+    let source = new Feed({
+      url: `${db.get('url')}/_changes`,
+      qs: {
+        include_docs: true,
+        since: 'now'
+      }
+    });
     let data = [];
     source.delegate = {
       onData(source_, json) {
@@ -70,7 +76,13 @@ configurations(({ module, test, createDatabase }) => {
     let source;
     let events = [];
     return protect(db).then(() => {
-      source = new Feed(`${db.get('url')}/_changes?feed=longpoll&include_docs=true&since=now`);
+      source = new Feed({
+        url: `${db.get('url')}/_changes`,
+        qs: {
+          include_docs: true,
+          since: 'now'
+        }
+      });
       source.delegate = {
         onData(source_, json) {
           events.push({ type: 'data', json });

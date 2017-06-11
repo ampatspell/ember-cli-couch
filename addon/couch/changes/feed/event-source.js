@@ -3,14 +3,20 @@ import Error from '../../../util/error';
 
 export default class LongPollingFeed extends Feed {
 
-  constructor(url) {
-    super(url);
+  constructor(opts) {
+    super(opts);
     this.source = null;
     this.bound = {
       open: this.onOpen.bind(this),
       error: this.onError.bind(this),
       message: this.onMessage.bind(this),
       heartbeat: this.onHeartbeat.bind(this)
+    };
+  }
+
+  get qs() {
+    return {
+      feed: 'eventsource'
     };
   }
 

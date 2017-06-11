@@ -57,7 +57,7 @@ function objectToQueryString(obj) {
   return pairs.join('&');
 }
 
-function composeURL(url, qs) {
+export function composeURL(url, qs) {
   qs = objectToQueryString(qs);
   if(qs) {
     return `${url}?${qs}`;

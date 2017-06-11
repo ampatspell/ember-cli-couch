@@ -1,7 +1,7 @@
 import { configurations, cleanup, next } from '../helpers/setup';
 import EventSourceFeed from 'couch/couch/database/changes-feed/event-source';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations({ only: '1.6' }, ({ module, test, createDatabase, config }) => {
 
   let db;
   let changes;
@@ -43,6 +43,15 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       return next();
     }).then(() => {
       assert.ok(changes.get('_feed'));
+    });
+  });
+
+  test('changes url', assert => {
+    assert.deepEqual(changes._feedOptions(), {
+      url: `${config.url}/${config.name}/_changes`,
+      qs: {
+        include_docs: true
+      }
     });
   });
 
