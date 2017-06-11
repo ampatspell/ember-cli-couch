@@ -16,7 +16,7 @@ export default Ember.Object.extend({
   source: null,
 
   _lookupSourceClass(type) {
-    let factory = getOwner(this).factoryFor(`couch:database-changes/source/${type}`);
+    let factory = getOwner(this).factoryFor(`couch:changes-source/${type}`);
     assert(`changes listener source named '${type}' is not registered`, !!factory);
     return factory.class;
   },
@@ -24,7 +24,7 @@ export default Ember.Object.extend({
   _createSource(type) {
     let Class = this._lookupSourceClass(type);
     let instance = new Class();
-    instance.type = type;
+    instance._changesType = type;
     return instance;
   },
 
@@ -33,7 +33,7 @@ export default Ember.Object.extend({
     let source = this.get('source');
     if(type && enabled) {
       if(source) {
-        if(source.type === type) {
+        if(source._changesType === type) {
           return;
         }
         source.destroy();
