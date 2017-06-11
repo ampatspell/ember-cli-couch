@@ -28,8 +28,8 @@ export default class LongPollingFeed extends Feed {
       }
     }, err => {
       if(this.started) {
-        this.onClosed();
         this.onError(err);
+        this.stop();
       }
       return resolve();
     });

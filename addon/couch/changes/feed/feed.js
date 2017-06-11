@@ -73,6 +73,7 @@ export default class Feed {
     this._stop();
     this.started = false;
     this.open = false;
+    this.notify('onStopped');
   }
 
   onOpen() {

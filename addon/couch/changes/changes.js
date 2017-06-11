@@ -39,6 +39,7 @@ export default (...deps) => Ember.Object.extend(Evented, {
   _updateFeed() {
     let { feed, enabled, _feed } = this.getProperties('feed', 'enabled', '_feed');
     if(_feed) {
+      _feed.delegate = null;
       _feed.destroy();
       _feed = null;
     }
@@ -77,6 +78,10 @@ export default (...deps) => Ember.Object.extend(Evented, {
 
   onError(feed, err) {
     this._trigger('error', err);
+  },
+
+  onStopped(feed) {
+    this._trigger('stopped');
   },
 
 });

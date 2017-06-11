@@ -44,6 +44,7 @@ export default class LongPollingFeed extends Feed {
       return;
     }
     super.onError(new Error({ error: 'unknown', reason: 'event source' }));
+    this.stop();
   }
 
   onHeartbeat() {
