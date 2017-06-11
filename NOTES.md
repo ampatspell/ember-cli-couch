@@ -2,4 +2,5 @@
 
 ## Changes listener
 
-https://bitbucket.org/ampatspell/ember-cli-sofa/src/98e4012231eb/addon/database/changes-listener/?at=default
+* changes listener should be recreated on login/logout
+* changes listener for `_db_changes`
