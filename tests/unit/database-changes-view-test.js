@@ -52,7 +52,7 @@ configurations(({ module, test, createDatabase, config }) => {
     }).then(([ foo ]) => {
       return db.save({ _id: 'foo', _rev: foo.rev, _deleted: true, type: 'thing' });
     }).then(() => {
-      return wait(null, 3000);
+      return wait(null, 1000);
     }).then(() => {
       assert.deepEqual_(data, [
         {

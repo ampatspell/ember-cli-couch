@@ -1,4 +1,4 @@
-import create from '../changes/changes';
+import create from '../changes/suspendable-changes';
 
 const Changes = create('view');
 
