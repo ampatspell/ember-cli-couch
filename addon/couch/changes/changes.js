@@ -27,19 +27,19 @@ export default Ember.Object.extend(Evented, {
     return factory.class;
   },
 
-  _createFeed() {
+  _createFeed(input) {
     let { feed } = this.get('opts');
     let Class = this._lookupFeedClass(feed);
-    let opts = this._feedOptions();
+    let opts = this._feedOptions(input);
     let instance = new Class(opts);
     return instance;
   },
 
-  start() {
+  start(opts) {
     if(this.get('isStarted')) {
       return;
     }
-    let feed = this._createFeed();
+    let feed = this._createFeed(opts);
     feed.delegate = this;
     feed.start();
     this.setProperties({
@@ -53,11 +53,18 @@ export default Ember.Object.extend(Evented, {
       return;
     }
     let feed = this.get('_feed');
-    feed.destroy();
+    feed.delegate = null;
+    let opts = feed.stop();
     this.setProperties({
       _feed: null,
       isStarted: false
     });
+    return opts;
+  },
+
+  restart() {
+    let opts = this.stop();
+    this.start(opts);
   },
 
   willDestroy() {

@@ -70,9 +70,4 @@ export default class Feed {
     this.notify('onData', json);
   }
 
-  destroy() {
-    this.delegate = null;
-    this.stop();
-  }
-
 }

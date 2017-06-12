@@ -5,8 +5,13 @@ export default SuspendableChanges.extend({
 
   database: null,
 
-  _feedOptions() {
+  _feedOptions(start) {
     let opts = this.get('opts');
+
+    let since;
+    if(start) {
+      since = start.since;
+    }
 
     let {
       view,
@@ -34,6 +39,7 @@ export default SuspendableChanges.extend({
 
     return {
       url: `${this.get('database.url')}/_changes`,
+      since,
       qs: {
         include_docs,
         conflicts,

@@ -6,9 +6,9 @@ const {
 
 export default Superclass => class extends Superclass {
 
-  stop() {
-    delete this.since;
-    return super.stop();
+  constructor(opts) {
+    super(opts);
+    this.since = opts.since || undefined;
   }
 
   get qs() {
@@ -17,6 +17,11 @@ export default Superclass => class extends Superclass {
       since = 'now';
     }
     return merge(super.qs, { since });
+  }
+
+  stop() {
+    super.stop();
+    return { since: this.since };
   }
 
 }
