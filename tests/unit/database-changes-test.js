@@ -16,7 +16,7 @@ configurations(({ module, test, createDatabase, config }) => {
 
   test('database changes is by default disabled, feed is event source', assert => {
     let changes = db.changes();
-    assert.ok(changes.get('opts.type') === 'event-source');
+    assert.ok(changes.get('opts.feed') === 'event-source');
     assert.ok(!changes.get('isStarted'));
   });
 

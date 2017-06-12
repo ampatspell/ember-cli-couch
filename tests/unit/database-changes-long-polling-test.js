@@ -15,7 +15,7 @@ configurations(({ module, test, createDatabase }) => {
 
   test('listen for changes', assert => {
     let data = [];
-    let changes = db.changes({ type: 'long-polling' });
+    let changes = db.changes({ feed: 'long-polling' });
     changes.on('data', doc => {
       data.push(doc);
     });

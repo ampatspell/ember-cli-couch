@@ -6,6 +6,8 @@ const {
   Evented
 } = Ember;
 
+export const defaultFeedIdentifier = 'event-source';
+
 export default Ember.Object.extend(Evented, {
 
   isStarted: false,
@@ -26,8 +28,8 @@ export default Ember.Object.extend(Evented, {
   },
 
   _createFeed() {
-    let type = this.get('opts.type');
-    let Class = this._lookupFeedClass(type);
+    let { feed } = this.get('opts');
+    let Class = this._lookupFeedClass(feed);
     let opts = this._feedOptions();
     let instance = new Class(opts);
     return instance;

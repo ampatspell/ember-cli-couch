@@ -15,7 +15,7 @@ configurations(({ module, test, createDatabase, config }) => {
 
   test('listen for changes suspend and resume', assert => {
     let data = [];
-    let changes = db.changes({ type: config.feed });
+    let changes = db.changes({ feed: config.feed });
     changes.on('data', doc => {
       data.push(doc);
     });

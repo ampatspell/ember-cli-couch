@@ -33,7 +33,7 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   test('listen for changes', assert => {
-    let changes = db.changes({ type: config.feed, view: 'changes/only-things' });
+    let changes = db.changes({ feed: config.feed, view: 'changes/only-things' });
     let data = [];
     changes.on('data', doc => {
       data.push(doc);

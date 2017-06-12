@@ -4,6 +4,7 @@ import toBase64 from '../util/base64';
 import { array } from '../util/computed';
 import { destroyArray } from '../util/destroy'
 import stringifyUnlessEmpty from '../util/stringify-unless-empty';
+import { defaultFeedIdentifier } from './changes/changes';
 
 const {
   getOwner,
@@ -210,7 +211,7 @@ export default Ember.Object.extend({
   },
 
   changes(opts) {
-    opts = merge({ type: 'event-source', include_docs: true }, opts);
+    opts = merge({ feed: defaultFeedIdentifier, include_docs: true }, opts);
     let changes = this._createChanges(opts);
     this.get('openChanges').pushObject(changes);
     return changes;
