@@ -1,14 +1,12 @@
-import { configurations, cleanup, next } from '../helpers/setup';
+import { configurations, cleanup } from '../helpers/setup';
 import EventSourceFeed from 'couch/couch/database/changes-feed/event-source';
 
 configurations(({ module, test, createDatabase, config }) => {
 
   let db;
-  let changes;
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
   }
 
   module('database-changes', () => {
@@ -16,43 +14,40 @@ configurations(({ module, test, createDatabase, config }) => {
     return cleanup(db);
   });
 
-  test('database has changes prop', assert => {
-    assert.ok(db.get('changes'));
-  });
-
   test('database changes is by default disabled, feed is event source', assert => {
-    assert.ok(!db.get('changes.enabled'));
-    assert.ok(db.get('changes.feed') === 'event-source');
+    let changes = db.changes();
+    assert.ok(changes.get('opts.type') === 'event-source');
+    assert.ok(!changes.get('isStarted'));
   });
 
   test('lookup feed class', assert => {
-    let Class = db.get('changes')._lookupFeedClass('event-source');
+    let changes = db.changes();
+    let Class = changes._lookupFeedClass('event-source');
     assert.ok(Class);
     assert.ok(Class === EventSourceFeed);
   });
 
   test('on changes enabled, feed is set and unset on disabled', assert => {
-    changes.set('enabled', true);
-    return next().then(() => {
-      assert.ok(changes.get('_feed'));
-      changes.set('enabled', false);
-      return next();
-    }).then(() => {
-      assert.ok(!changes.get('_feed'));
-      changes.set('enabled', true);
-      return next();
-    }).then(() => {
-      assert.ok(changes.get('_feed'));
-    });
+    let changes = db.changes();
+    changes.start();
+    assert.ok(changes.get('_feed'));
   });
 
-  test('changes url', assert => {
+  test('changes feed options', assert => {
+    let changes = db.changes();
     assert.deepEqual(changes._feedOptions(), {
       url: `${config.url}/${config.name}/_changes`,
       qs: {
-        include_docs: true,
-        filter: undefined,
-        view: undefined
+        "attachments": undefined,
+        "conflicts": undefined,
+        "descending": undefined,
+        "doc_ids": undefined,
+        "filter": undefined,
+        "heartbeat": undefined,
+        "include_docs": true,
+        "style": undefined,
+        "timeout": undefined,
+        "view": undefined
       }
     });
   });

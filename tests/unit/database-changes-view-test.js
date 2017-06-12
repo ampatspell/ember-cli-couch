@@ -8,12 +8,9 @@ const {
 configurations(({ module, test, createDatabase, config }) => {
 
   let db;
-  let changes;
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
-    changes.set('feed', config.feed);
   }
 
   module('database-changes-view', () => {
@@ -36,14 +33,12 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   test('listen for changes', assert => {
+    let changes = db.changes({ type: config.feed, view: 'changes/only-things' });
     let data = [];
-    changes.setProperties({
-      view: 'changes/only-things',
-      enabled: true
-    });
     changes.on('data', doc => {
       data.push(doc);
     });
+    changes.start();
     return wait(null, 1000).then(() => {
       return all([
         db.save({ _id: 'foo', type: 'thing' }),

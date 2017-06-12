@@ -1,4 +1,4 @@
-import { configurations, cleanup, wait, admin, login, logout } from '../helpers/setup';
+import { configurations, cleanup, wait } from '../helpers/setup';
 import DatabaseChanges from 'couch/couch/database/changes';
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {

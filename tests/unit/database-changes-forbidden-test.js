@@ -3,7 +3,6 @@ import { configurations, cleanup, wait, admin, login, logout } from '../helpers/
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
   let db;
-  let changes;
 
   function protect(db) {
     return login(db).then(() => {
@@ -24,7 +23,6 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
   }
 
   module('database-changes-forbidden', () => {
@@ -35,7 +33,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   test('attempt to listen for changes', assert => {
     let data = [];
     return protect(db).then(() => {
-      changes.set('enabled', true);
+      let changes = db.changes();
       changes.on('data', doc => {
         data.push(doc);
       });
@@ -45,6 +43,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       changes.on('stopped', () => {
         data.push('stopped');
       });
+      changes.start();
       return wait(null, 1000);
     }).then(() => {
       // assert.equal(changes.get('isOpen'), false);

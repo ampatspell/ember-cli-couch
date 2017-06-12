@@ -3,11 +3,9 @@ import { configurations, cleanup, wait } from '../helpers/setup';
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
   let db;
-  let changes;
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
   }
 
   module('database-changes-event-source', () => {
@@ -17,10 +15,11 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
   test('listen for changes', assert => {
     let data = [];
-    changes.set('enabled', true);
+    let changes = db.changes();
     changes.on('data', doc => {
       data.push(doc);
     });
+    changes.start();
     return wait().then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {

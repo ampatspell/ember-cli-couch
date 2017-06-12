@@ -1,14 +1,11 @@
-import { configurations, cleanup, next, wait } from '../helpers/setup';
+import { configurations, cleanup, wait } from '../helpers/setup';
 
 configurations(({ module, test, createDatabase, config }) => {
 
   let db;
-  let changes;
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
-    changes.set('feed', config.feed);
   }
 
   module('database-changes-suspend', () => {
@@ -18,10 +15,11 @@ configurations(({ module, test, createDatabase, config }) => {
 
   test('listen for changes suspend and resume', assert => {
     let data = [];
-    changes.set('enabled', true);
+    let changes = db.changes({ type: config.feed });
     changes.on('data', doc => {
       data.push(doc);
     });
+    changes.start();
 
     let resume;
     resume = changes.suspend();
@@ -33,10 +31,10 @@ configurations(({ module, test, createDatabase, config }) => {
     }).then(() => {
       assert.deepEqual(data, []);
       resume();
-      return next().then(() => next());
+      return wait(null, 500);
     }).then(() => {
       assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two' ]);
-      return db.save({ _id: 'three' }).then(() => next()).then(() => next());
+      return db.save({ _id: 'three' }).then(() => wait(null, 500));
     }).then(() => {
       assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two', 'three' ]);
     });

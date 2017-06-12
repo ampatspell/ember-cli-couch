@@ -3,12 +3,9 @@ import { configurations, cleanup, wait } from '../helpers/setup';
 configurations(({ module, test, createDatabase }) => {
 
   let db;
-  let changes;
 
   function flush() {
     db = createDatabase();
-    changes = db.get('changes');
-    changes.set('feed', 'long-polling');
   }
 
   module('database-changes-long-polling', () => {
@@ -18,16 +15,17 @@ configurations(({ module, test, createDatabase }) => {
 
   test('listen for changes', assert => {
     let data = [];
-    changes.set('enabled', true);
+    let changes = db.changes({ type: 'long-polling' });
     changes.on('data', doc => {
       data.push(doc);
     });
-    return wait().then(() => {
+    changes.start();
+    return wait(null, 1000).then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait();
+      return wait(null, 1000);
     }).then(() => {
       assert.deepEqual_(data, [
         {

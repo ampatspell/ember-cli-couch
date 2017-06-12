@@ -2,10 +2,7 @@ import Ember from 'ember';
 import assert from '../../util/assert';
 
 const {
-  on,
-  observer,
   getOwner,
-  run: { next, cancel },
   Evented
 } = Ember;
 
