@@ -25,3 +25,9 @@
   <div class='strong'>{{model.message.message}}</div>
   <div>— {{model.message.author}}</div>
 </div>
+<div class="block">
+  <div>{{changes.changes}}</div>
+  {{#each changes.log as |item|}}
+    {{ui-json data=item}}
+  {{/each}}
+</div>
