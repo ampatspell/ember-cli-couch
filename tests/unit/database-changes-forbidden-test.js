@@ -40,9 +40,6 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       changes.on('error', err => {
         data.push(err.toJSON());
       });
-      changes.on('stopped', () => {
-        data.push('stopped');
-      });
       changes.start();
       return wait(null, 1000);
     }).then(() => {
@@ -51,8 +48,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
         {
           "error": "unknown",
           "reason": "event source"
-        },
-        'stopped'
+        }
       ]);
     });
   });

@@ -39,19 +39,21 @@ export default Ember.Object.extend(Evented, {
     if(this.get('isStarted')) {
       return;
     }
-    let _feed = this._createFeed();
-    _feed.delegate = this;
-    _feed.start();
-    this.setProperties({ _feed, isStarted: true });
+    let feed = this._createFeed();
+    feed.delegate = this;
+    feed.start();
+    this.setProperties({
+      _feed: feed,
+      isStarted: true
+    });
   },
 
   stop() {
     if(!this.get('isStarted')) {
       return;
     }
-    let _feed = this.get('_feed');
-    _feed.delegate = null;
-    _feed.destroy();
+    let feed = this.get('_feed');
+    feed.destroy();
     this.setProperties({
       _feed: null,
       isStarted: false
@@ -73,10 +75,6 @@ export default Ember.Object.extend(Evented, {
 
   onError(feed, err) {
     this._trigger('error', err);
-  },
-
-  onStopped() {
-    this._trigger('stopped');
-  },
+  }
 
 });

@@ -46,15 +46,13 @@ configurations(({ module, test, createDatabase }) => {
       }
     };
     source.start();
-    assert.equal(source.started, true);
-    return wait().then(() => {
+    return wait(null, 1000).then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait(null, 100);
+      return wait(null, 1000);
     }).then(() => {
-      assert.equal(source.open, true);
       source.stop();
       assert.deepEqual_(data, [
         {
@@ -90,12 +88,8 @@ configurations(({ module, test, createDatabase }) => {
         }
       };
       source.start();
-      assert.equal(source.started, true);
-      assert.equal(source.open, true);
       return wait(null, 100);
     }).then(() => {
-      assert.equal(source.started, false);
-      assert.equal(source.open, false);
       assert.deepEqual(events, [
         {
           type: 'error',

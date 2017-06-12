@@ -29,9 +29,8 @@ export default class Feed {
 
   constructor(opts) {
     this.opts = opts;
-    this.started = false;
-    this.open = false;
     this.delegate = null;
+    this.started = false;
   }
 
   get url() {
@@ -41,6 +40,9 @@ export default class Feed {
   }
 
   notify(name, ...args) {
+    if(!this.started) {
+      return;
+    }
     let delegate = this.delegate;
     if(!delegate) {
       return;
@@ -52,40 +54,15 @@ export default class Feed {
     fn.call(delegate, this, ...args);
   }
 
-  _start() {
-  }
-
   start() {
-    if(this.started) {
-      return;
-    }
-    this._start();
     this.started = true;
   }
 
-  _stop() {
-  }
-
   stop() {
-    if(!this.started) {
-      return;
-    }
-    this._stop();
     this.started = false;
-    this.open = false;
-    this.notify('onStopped');
-  }
-
-  onOpen() {
-    this.open = true;
-  }
-
-  onClosed() {
-    this.open = false;
   }
 
   onError(err) {
-    this.open = false;
     this.notify('onError', err);
   }
 

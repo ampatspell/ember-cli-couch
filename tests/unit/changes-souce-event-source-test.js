@@ -47,7 +47,6 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
       }
     };
     source.start();
-    assert.equal(source.started, true);
     return wait().then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
@@ -55,7 +54,6 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(() => {
       return wait(null, 1000);
     }).then(() => {
-      assert.equal(source.open, true);
       source.stop();
       assert.deepEqual_(data.map(row => row.doc), [
         {
@@ -92,12 +90,8 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
         }
       };
       source.start();
-      assert.equal(source.started, true);
-      assert.equal(source.open, false);
       return wait(null, 1000);
     }).then(() => {
-      assert.equal(source.started, false);
-      assert.equal(source.open, false);
       assert.deepEqual(events, [
         {
           type: 'error',

@@ -16,21 +16,12 @@ export default class LongPollingFeed extends Feed {
   }
 
   poll() {
-    this.onOpen();
-
     let url = this.url;
-
     request({ type: 'get', url, json: true }).then(data => {
-      if(this.started) {
-        this.onMessage(data);
-        this.onClosed();
-        this.nextPoll();
-      }
+      this.onMessage(data);
+      this.nextPoll();
     }, err => {
-      if(this.started) {
-        this.onError(err);
-        this.stop();
-      }
+      this.onError(err);
       return resolve();
     });
   }
@@ -45,8 +36,9 @@ export default class LongPollingFeed extends Feed {
     });
   }
 
-  _start() {
+  start() {
     this.poll();
+    super.start();
   }
 
   onMessage(message) {

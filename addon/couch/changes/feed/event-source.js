@@ -1,7 +1,7 @@
 import Feed from './feed';
 import Error from '../../../util/error';
 
-export default class LongPollingFeed extends Feed {
+export default class EventSourceFeed extends Feed {
 
   constructor(opts) {
     super(opts);
@@ -20,22 +20,27 @@ export default class LongPollingFeed extends Feed {
     };
   }
 
-  _start() {
+  start() {
     /* global EventSource */
     let source = new EventSource(this.url, { withCredentials: true });
     for(let key in this.bound) {
       source.addEventListener(key, this.bound[key], false);
     }
     this.source = source;
+    super.start();
   }
 
-  _stop() {
+  stop() {
     let source = this.source;
     source.close();
     for(let key in this.bound) {
       source.removeEventListener(key, this.bound[key], false);
     }
     this.source = null;
+    super.stop();
+  }
+
+  onOpen() {
   }
 
   onError(e) {
@@ -44,7 +49,6 @@ export default class LongPollingFeed extends Feed {
       return;
     }
     super.onError(new Error({ error: 'unknown', reason: 'event source' }));
-    this.stop();
   }
 
   onHeartbeat() {
