@@ -60,10 +60,8 @@ export default Ember.Object.extend(Evented, {
   },
 
   willDestroy() {
-    let _feed = this.get('_feed');
-    if(_feed) {
-      _feed.destroy();
-    }
+    this.stop();
+    this._super();
   },
 
   _trigger(type, arg) {
