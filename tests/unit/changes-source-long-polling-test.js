@@ -94,7 +94,7 @@ configurations(({ module, test, createDatabase }) => {
       assert.equal(source.open, true);
       return wait(null, 100);
     }).then(() => {
-      assert.equal(source.started, true);
+      assert.equal(source.started, false);
       assert.equal(source.open, false);
       assert.deepEqual(events, [
         {

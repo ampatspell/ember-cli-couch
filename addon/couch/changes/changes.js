@@ -80,7 +80,7 @@ export default (...deps) => Ember.Object.extend(Evented, {
     this._trigger('error', err);
   },
 
-  onStopped(feed) {
+  onStopped() {
     this._trigger('stopped');
   },
 
