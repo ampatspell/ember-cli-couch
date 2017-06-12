@@ -5,7 +5,7 @@ export default class DatabaseEventSourceFeed extends qs(Feed) {
 
   onData(data) {
     this.since = data.seq;
-    super.onData(data.doc);
+    super.onData(data);
   }
 
 }

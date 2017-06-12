@@ -33,10 +33,10 @@ configurations(({ module, test, createDatabase, config }) => {
       resume();
       return wait(null, 500);
     }).then(() => {
-      assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two' ]);
+      assert.deepEqual(data.map(row => row.doc._id), [ 'one', 'two' ]);
       return db.save({ _id: 'three' }).then(() => wait(null, 500));
     }).then(() => {
-      assert.deepEqual(data.map(doc => doc._id), [ 'one', 'two', 'three' ]);
+      assert.deepEqual(data.map(row => row.doc._id), [ 'one', 'two', 'three' ]);
     });
   });
 

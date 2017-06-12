@@ -38,7 +38,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(() => {
       return wait(null, 100);
     }).then(() => {
-      assert.deepEqual_(data, [
+      assert.deepEqual_(data.map(row => row.doc), [
         {
           "_id": "foo",
           "_rev": "ignored",

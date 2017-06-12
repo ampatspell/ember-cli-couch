@@ -10,7 +10,7 @@ export default class DatabaseLongPollingFeed extends qs(Feed) {
 
   onData(data) {
     this.since = data.last_seq;
-    A(data.results).forEach(result => super.onData(result.doc));
+    A(data.results).forEach(result => super.onData(result));
   }
 
 }
