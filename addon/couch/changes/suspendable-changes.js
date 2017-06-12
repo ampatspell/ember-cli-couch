@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import base from './changes';
+import Changes from './changes';
 import { array } from '../../util/computed';
 import assert from '../../util/assert';
 
@@ -8,7 +8,7 @@ const {
   run: { next, cancel }
 } = Ember;
 
-export default (...deps) => base(...deps).extend({
+export default Changes.extend({
 
   _suspended: 0,
   _queue: array(),

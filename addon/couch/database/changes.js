@@ -1,26 +1,48 @@
-import create from '../changes/suspendable-changes';
+import SuspendableChanges from '../changes/suspendable-changes';
+import stringifyUnlessEmpty from '../../util/stringify-unless-empty';
 
-const Changes = create('view');
-
-export default Changes.extend({
+export default SuspendableChanges.extend({
 
   database: null,
 
-  view: null,
-
   _feedOptions() {
-    let view = this.get('view');
-    if(!view) {
-      view = undefined;
-    }
-    let filter;
+    let opts = this.get('opts');
+
+    let {
+      view,
+      filter,
+      include_docs,
+      conflicts,
+      style,
+      timeout,
+      attachments,
+      heartbeat,
+      doc_ids,
+      descending
+    } = opts;
+
+    view = view || undefined;
+
     if(view) {
       filter = '_view';
     }
+
+    if(doc_ids) {
+      view = undefined;
+      filter = '_doc_ids';
+    }
+
     return {
       url: `${this.get('database.url')}/_changes`,
       qs: {
-        include_docs: true,
+        include_docs,
+        conflicts,
+        style,
+        timeout,
+        attachments,
+        heartbeat,
+        descending,
+        doc_ids: stringifyUnlessEmpty(doc_ids),
         view,
         filter
       },
@@ -29,6 +51,11 @@ export default Changes.extend({
 
   _feedFactoryName(feed) {
     return `couch:database-changes/feed/${feed}`;
+  },
+
+  willDestroy() {
+    this.get('database')._changesWillDestroy(this);
+    this._super();
   }
 
 });

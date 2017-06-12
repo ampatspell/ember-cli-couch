@@ -9,10 +9,9 @@ const {
   Evented
 } = Ember;
 
-export default (...deps) => Ember.Object.extend(Evented, {
+export default Ember.Object.extend(Evented, {
 
-  enabled: false,
-  feed: 'event-source',
+  isStarted: false,
 
   _feedOptions() {
     assert({ error: 'internal', reason: 'override Changes._feedOptions' }, false);
@@ -29,39 +28,38 @@ export default (...deps) => Ember.Object.extend(Evented, {
     return factory.class;
   },
 
-  _createFeed(feed) {
-    let Class = this._lookupFeedClass(feed);
+  _createFeed() {
+    let type = this.get('opts.type');
+    let Class = this._lookupFeedClass(type);
     let opts = this._feedOptions();
     let instance = new Class(opts);
     return instance;
   },
 
-  _updateFeed() {
-    let { feed, enabled, _feed } = this.getProperties('feed', 'enabled', '_feed');
-    if(_feed) {
-      _feed.delegate = null;
-      _feed.destroy();
-      _feed = null;
+  start() {
+    if(this.get('isStarted')) {
+      return;
     }
-    if(feed && enabled) {
-      _feed = this._createFeed(feed);
-      _feed.delegate = this;
-      _feed.start();
-    }
-    this.set('_feed', _feed);
+    let _feed = this._createFeed();
+    _feed.delegate = this;
+    _feed.start();
+    this.setProperties({ _feed, isStarted: true });
   },
 
-  _setSource: on('init', function() {
-    this._updateFeed();
-  }),
-
-  _sourceDependenciesDidChange: observer('feed', 'enabled', ...deps, function() {
-    cancel(this.__updateFeed);
-    this.__updateFeed = next(() => this._updateFeed());
-  }),
+  stop() {
+    if(!this.get('isStarted')) {
+      return;
+    }
+    let _feed = this.get('_feed');
+    _feed.delegate = null;
+    _feed.destroy();
+    this.setProperties({
+      _feed: null,
+      isStarted: false
+    });
+  },
 
   willDestroy() {
-    cancel(this.__updateFeed);
     let _feed = this.get('_feed');
     if(_feed) {
       _feed.destroy();
