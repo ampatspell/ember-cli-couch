@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import createFileLoader from '../util/file-loader/create';
 import toBase64 from '../util/base64';
+import { array } from '../util/computed';
+import { destroyArray } from '../util/destroy'
+import stringifyUnlessEmpty from '../util/stringify-unless-empty';
 
 const {
   getOwner,
@@ -11,14 +14,6 @@ const {
   RSVP: { resolve, all },
   A
 } = Ember;
-
-const stringifyUnlessEmpty = value => {
-  let type = typeOf(value);
-  if(type === 'null' || type === 'undefined') {
-    return;
-  }
-  return JSON.stringify(value);
-};
 
 const lookup = name => {
   return computed(function() {
@@ -31,11 +26,12 @@ export default Ember.Object.extend({
   couch: null,
   name: null,
 
+  openChanges: array(),
+
   security: lookup('couch:database-security'),
   design:   lookup('couch:database-design'),
   database: lookup('couch:database-database'),
   mango:    lookup('couch:database-mango'),
-  changes:  lookup('couch:database-changes'),
 
   url: computed('couch.url', 'name', function() {
     let url = this.get('couch.url');
@@ -208,12 +204,28 @@ export default Ember.Object.extend({
     return this._view('_all_docs', opts);
   },
 
+  _createChanges(opts) {
+    let database = this;
+    return getOwner(this).factoryFor('couch:database-changes').create({ database, opts });
+  },
+
+  changes(opts) {
+    opts = merge({ type: 'event-source', include_docs: true }, opts);
+    let changes = this._createChanges(opts);
+    this.get('openChanges').pushObject(changes);
+    return changes;
+  },
+
+  _changesWillDestroy(changes) {
+    this.get('openChanges').removeObject(changes);
+  },
+
   willDestroy() {
+    destroyArray(this.get('openChanges'));
     this.get('security').destroy();
     this.get('design').destroy();
     this.get('database').destroy();
     this.get('mango').destroy();
-    this.get('changes').destroy();
     this._super();
   },
 
