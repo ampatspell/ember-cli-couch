@@ -32,7 +32,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
     changes.start();
     return wait(null, 100).then(() => {
-        return db.save({ _id: 'foo', type: 'thing' });
+      return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
