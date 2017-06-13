@@ -1,10 +1,11 @@
 import Ember from 'ember';
 
 const {
-  RSVP: { reject }
+  RSVP: { reject },
+  Evented
 } = Ember;
 
-export default Ember.Object.extend(Ember.Evented, {
+export default Ember.Object.extend(Evented, {
 
   couch: null,
 

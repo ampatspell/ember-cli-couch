@@ -15,6 +15,8 @@ export default {
       }
     });
 
+    app.lookup('service:changes');
+
     window.db = app.lookup('service:db');
     window.log = info;
   }
