@@ -20,18 +20,18 @@ configurations(({ module, test, createDatabase, config }) => {
       data.push(doc);
     });
     changes.start();
-    let opts;
+    assert.ok(!changes.get('opts.since'));
     return wait(null, 1000).then(() => {
       return db.save({ _id: 'foo' }).then(() => waitFor(() => data.length === 1));
     }).then(() => {
       assert.deepEqual_(data.map(row => row.doc._id), [ 'foo' ]);
-      opts = changes.stop();
-      assert.ok(opts.since);
+      changes.stop();
+      assert.ok(changes.get('opts.since'));
       return wait(null, 1000);
     }).then(() => {
       return db.save({ _id: 'bar' }).then(() => wait(null, 1000));
     }).then(() => {
-      return changes.start(opts);
+      return changes.start();
     }).then(() => {
       return waitFor(() => data.length === 2);
     }).then(() => {

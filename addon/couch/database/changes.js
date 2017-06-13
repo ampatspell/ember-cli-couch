@@ -5,15 +5,11 @@ export default SuspendableChanges.extend({
 
   database: null,
 
-  _feedOptions(start) {
+  _feedOptions() {
     let opts = this.get('opts');
 
-    let since;
-    if(start) {
-      since = start.since;
-    }
-
     let {
+      since,
       view,
       filter,
       include_docs,

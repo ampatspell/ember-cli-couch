@@ -3,7 +3,8 @@ import assert from '../../util/assert';
 
 const {
   getOwner,
-  Evented
+  Evented,
+  merge
 } = Ember;
 
 export const defaultFeedIdentifier = 'event-source';
@@ -27,19 +28,19 @@ export default Ember.Object.extend(Evented, {
     return factory.class;
   },
 
-  _createFeed(input) {
+  _createFeed() {
     let { feed } = this.get('opts');
     let Class = this._lookupFeedClass(feed);
-    let opts = this._feedOptions(input);
+    let opts = this._feedOptions();
     let instance = new Class(opts);
     return instance;
   },
 
-  start(opts) {
+  start() {
     if(this.get('isStarted')) {
       return;
     }
-    let feed = this._createFeed(opts);
+    let feed = this._createFeed();
     feed.delegate = this;
     feed.start();
     this.setProperties({
@@ -57,14 +58,14 @@ export default Ember.Object.extend(Evented, {
     let opts = feed.stop();
     this.setProperties({
       _feed: null,
-      isStarted: false
+      isStarted: false,
+      opts: merge(this.get('opts'), opts)
     });
-    return opts;
   },
 
   restart() {
-    let opts = this.stop();
-    this.start(opts);
+    this.stop();
+    this.start();
   },
 
   willDestroy() {
