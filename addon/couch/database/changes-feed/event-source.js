@@ -1,7 +1,7 @@
 import Feed from '../../changes/feed/event-source';
-import qs from './qs';
+import withSince from './mixins/with-since';
 
-export default class DatabaseEventSourceFeed extends qs(Feed) {
+export default class DatabaseEventSourceFeed extends withSince(Feed) {
 
   onData(data) {
     this.since = data.seq;
