@@ -1,48 +1,16 @@
 import Ember from 'ember';
-import Feed from './feed';
-import { request } from '../../request';
+import Feed from './base-long-polling';
+import withSince from './mixins/with-since';
 
 const {
-  run: { next, cancel },
-  RSVP: { resolve }
+  A
 } = Ember;
 
-export default class LongPollingFeed extends Feed {
+export default class LongPollingFeed extends withSince(Feed) {
 
-  get qs() {
-    return {
-      feed: 'longpoll'
-    };
-  }
-
-  poll() {
-    let url = this.url;
-    request({ type: 'get', url, json: true }).then(data => {
-      this.onMessage(data);
-      this.nextPoll();
-    }, err => {
-      this.onError(err);
-      return resolve();
-    });
-  }
-
-  nextPoll() {
-    cancel(this._poll);
-    this._poll = next(() => {
-      if(!this.started) {
-        return;
-      }
-      this.poll();
-    });
-  }
-
-  start() {
-    this.poll();
-    super.start();
-  }
-
-  onMessage(message) {
-    this.onData(message);
+  onData(data) {
+    this.since = data.last_seq;
+    A(data.results).forEach(result => super.onData(result));
   }
 
 }
