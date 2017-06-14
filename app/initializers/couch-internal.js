@@ -10,8 +10,8 @@ import DatabaseDatabase from 'couch/couch/database/database';
 import Mango from 'couch/couch/database/mango';
 import DatabaseChanges from 'couch/couch/database/changes';
 import CouchChanges from 'couch/couch/changes';
-import ChangesFeedEventSource from 'couch/couch/changes/feed/event-source';
-import ChangesFeedLongPolling from 'couch/couch/changes/feed/long-polling';
+import ChangesFeedEventSource from 'couch/couch/changes/feed/unified/event-source';
+import ChangesFeedLongPolling from 'couch/couch/changes/feed/unified/long-polling';
 
 export default {
   name: 'couch:internal',

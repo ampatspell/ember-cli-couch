@@ -1,5 +1,5 @@
 import { configurations, cleanup } from '../helpers/setup';
-import EventSourceFeed from 'couch/couch/changes/feed/event-source';
+import EventSourceFeed from 'couch/couch/changes/feed/unified/event-source';
 
 configurations(({ module, test, createDatabase, config }) => {
 
