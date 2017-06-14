@@ -1,10 +1,8 @@
 import Ember from 'ember';
 import createFileLoader from '../util/file-loader/create';
 import toBase64 from '../util/base64';
-import { array } from '../util/computed';
-import { destroyArray } from '../util/destroy'
 import stringifyUnlessEmpty from '../util/stringify-unless-empty';
-import { defaultFeedIdentifier } from './changes/changes';
+import ChangesMixin from './changes/mixin';
 
 const {
   getOwner,
@@ -22,12 +20,10 @@ const lookup = name => {
   }).readOnly();
 };
 
-export default Ember.Object.extend({
+export default Ember.Object.extend(ChangesMixin, {
 
   couch: null,
   name: null,
-
-  openChanges: array(),
 
   security: lookup('couch:database-security'),
   design:   lookup('couch:database-design'),
@@ -205,24 +201,12 @@ export default Ember.Object.extend({
     return this._view('_all_docs', opts);
   },
 
-  _createChanges(opts) {
-    let database = this;
-    return getOwner(this).factoryFor('couch:database-changes').create({ database, opts });
-  },
-
-  changes(opts) {
-    opts = merge({ feed: defaultFeedIdentifier, include_docs: true }, opts);
-    let changes = this._createChanges(opts);
-    this.get('openChanges').pushObject(changes);
-    return changes;
-  },
-
-  _changesWillDestroy(changes) {
-    this.get('openChanges').removeObject(changes);
+  createChanges(opts) {
+    opts = merge({ include_docs: true }, opts);
+    return getOwner(this).factoryFor('couch:database-changes').create({ database: this, opts });
   },
 
   willDestroy() {
-    destroyArray(this.get('openChanges'));
     this.get('security').destroy();
     this.get('design').destroy();
     this.get('database').destroy();
