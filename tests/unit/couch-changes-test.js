@@ -1,5 +1,10 @@
+import Ember from 'ember';
 import { configurations, cleanup, wait } from '../helpers/setup';
 import CouchChanges from 'couch/couch/changes';
+
+const {
+  A
+} = Ember;
 
 configurations(({ module, test, createDatabase, config }) => {
 
@@ -34,13 +39,20 @@ configurations(({ module, test, createDatabase, config }) => {
     }).then(() => {
       return wait(null, 1000);
     }).then(() => {
-      assert.ok(Ember.A(log).findBy('db_name', config.name));
-      assert.ok(Ember.A(log).findBy('type', 'deleted'));
-      assert.ok(Ember.A(log).findBy('type', 'created'));
       if(config.key === '2.0') {
-        assert.ok(Ember.A(log).findBy('db_name', config.name));
-        assert.ok(Ember.A(log).findBy('type', 'deleted'));
-        assert.ok(Ember.A(log).findBy('type', 'created'));
+        log = A(log).filter(row => row.db_name !== '_dbs');
+        assert.deepEqual_(log, [
+          {
+            "db_name": "ember-cli-couch",
+            "seq": log[0].seq,
+            "type": "deleted"
+          },
+          {
+            "db_name": "ember-cli-couch",
+            "seq": log[1].seq,
+            "type": "created"
+          }
+        ]);
       } else {
         assert.deepEqual_(log, [
           {
