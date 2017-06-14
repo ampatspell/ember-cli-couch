@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import { object } from './util/computed';
 import { destroyObject } from './util/destroy';
+import Changes from './couch/changes/mixin';
 
 const {
   computed,
@@ -26,7 +27,7 @@ const session = () => {
   }).readOnly();
 };
 
-export default Ember.Object.extend({
+export default Ember.Object.extend(Changes, {
 
   couches: null,
   url: null,
@@ -96,6 +97,10 @@ export default Ember.Object.extend({
 
   _destroySession() {
     this.get('session').destroy();
+  },
+
+  createChanges(opts) {
+    return getOwner(this).factoryFor('couch:couch-changes').create({ couch: this, opts });
   },
 
   willDestroy() {
