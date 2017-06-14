@@ -37,6 +37,22 @@ configurations(({ module, test, createDatabase, config }) => {
       assert.ok(Ember.A(log).findBy('db_name', config.name));
       assert.ok(Ember.A(log).findBy('type', 'deleted'));
       assert.ok(Ember.A(log).findBy('type', 'created'));
+      if(config.key === '2.0') {
+        assert.ok(Ember.A(log).findBy('db_name', config.name));
+        assert.ok(Ember.A(log).findBy('type', 'deleted'));
+        assert.ok(Ember.A(log).findBy('type', 'created'));
+      } else {
+        assert.deepEqual_(log, [
+          {
+            "db_name": "ember-cli-couch",
+            "type": "deleted"
+          },
+          {
+            "db_name": "ember-cli-couch",
+            "type": "created"
+          }
+        ]);
+      }
     })
   });
 
