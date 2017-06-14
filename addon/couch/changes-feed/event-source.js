@@ -1,8 +1,10 @@
 import Feed from '../changes/feed/event-source';
+import withSince from '../changes/feed/mixins/with-since';
 
-export default class CouchEventSourceFeed extends Feed {
+export default class CouchEventSourceFeed extends withSince(Feed) {
 
   onData(data) {
+    this.since = data.seq;
     super.onData(data);
   }
 

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Feed from '../../changes/feed/long-polling';
-import withSince from './mixins/with-since';
+import withSince from '../../changes/feed/mixins/with-since';
 
 const {
   A
