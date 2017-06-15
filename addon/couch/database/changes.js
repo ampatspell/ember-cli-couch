@@ -1,16 +1,6 @@
 import SuspendableChanges from '../changes/suspendable-changes';
 import stringifyUnlessEmpty from '../../util/stringify-unless-empty';
 
-export const options = [
-  'feed',
-  'view',
-  'filter',
-  'timeout',
-  'attachments',
-  'heartbeat',
-  'since'
-];
-
 export default SuspendableChanges.extend({
 
   database: null,
