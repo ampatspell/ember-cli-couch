@@ -14,9 +14,9 @@ configurations(({ module, test, createDatabase, config }) => {
     return cleanup(db);
   });
 
-  test('database changes is by default disabled, feed is event source', assert => {
+  test('database changes is by default disabled, feeds are event source and long polling', assert => {
     let changes = db.changes();
-    assert.ok(changes.get('opts.feed') === 'event-source');
+    assert.deepEqual(changes.get('opts.feed'), [ 'event-source', 'long-polling' ]);
     assert.ok(!changes.get('isStarted'));
   });
 

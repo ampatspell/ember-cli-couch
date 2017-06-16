@@ -4,10 +4,12 @@ import assert from '../../util/assert';
 const {
   getOwner,
   Evented,
-  merge
+  merge,
+  isArray,
+  A
 } = Ember;
 
-export const defaultFeedIdentifier = 'event-source';
+export const defaultFeedIdentifiers = [ 'event-source', 'long-polling' ];
 
 export default Ember.Object.extend(Evented, {
 
@@ -28,19 +30,27 @@ export default Ember.Object.extend(Evented, {
     return factory.class;
   },
 
-  _createFeed() {
-    let { feed } = this.get('opts');
-    let Class = this._lookupFeedClass(feed);
+  _createFeed(Feed) {
     let opts = this._feedOptions();
-    let instance = new Class(opts);
+    let instance = new Feed(opts);
     return instance;
+  },
+
+  _createSupportedFeed() {
+    let { feed } = this.get('opts');
+    if(!isArray(feed)) {
+      feed = [ feed ];
+    }
+    let Feed = A(feed).map(name => this._lookupFeedClass(name)).find(feedClass => feedClass.isSupported());
+    assert(`no browser supported changes feed type found in listed '${feed.join(', ')}' types`, !!Feed);
+    return this._createFeed(Feed);
   },
 
   start() {
     if(this.get('isStarted')) {
       return;
     }
-    let feed = this._createFeed();
+    let feed = this._createSupportedFeed();
     feed.delegate = this;
     feed.start();
     this.setProperties({

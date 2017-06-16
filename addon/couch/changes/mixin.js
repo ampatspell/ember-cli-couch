@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import { array } from '../../util/computed';
 import { destroyArray } from '../../util/destroy'
-import { defaultFeedIdentifier } from './changes';
+import { defaultFeedIdentifiers } from './changes';
 
 const {
   merge
@@ -12,7 +12,7 @@ export default Ember.Mixin.create({
   openChanges: array(),
 
   changes(opts) {
-    opts = merge({ feed: defaultFeedIdentifier }, opts);
+    opts = merge({ feed: defaultFeedIdentifiers }, opts);
     let changes = this.createChanges(opts);
     this.get('openChanges').pushObject(changes);
     return changes;

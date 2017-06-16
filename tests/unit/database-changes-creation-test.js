@@ -20,7 +20,10 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     assert.ok(DatabaseChanges.detectInstance(changes));
     assert.deepEqual(changes.get('opts'), {
       "include_docs": true,
-      "feed": "event-source"
+      "feed": [
+        "event-source",
+        "long-polling"
+      ]
     });
   });
 
