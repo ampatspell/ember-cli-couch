@@ -9,6 +9,10 @@ const {
 
 export default class LongPollingFeed extends Feed {
 
+  static isSupported() {
+    return true;
+  }
+
   get qs() {
     return {
       feed: 'longpoll'

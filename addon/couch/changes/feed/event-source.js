@@ -3,6 +3,10 @@ import Error from '../../../util/error';
 
 export default class EventSourceFeed extends Feed {
 
+  static isSupported() {
+    return typeof(EventSource) !== "undefined";
+  }
+
   constructor(opts) {
     super(opts);
     this.source = null;
