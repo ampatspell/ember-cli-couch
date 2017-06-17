@@ -68,10 +68,12 @@ couches
     request(opts)
     info()
     uuids(count)
+    changes(opts)
     database(name)
       couch
       name
       url
+      changes(opts)
       security
         load()
         save(body)
