@@ -96,8 +96,8 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
         {
           type: 'error',
           err: {
-            error: 'unknown',
-            reason: 'event source'
+            error: 'event source',
+            reason: 'unknown'
           }
         }
       ]);

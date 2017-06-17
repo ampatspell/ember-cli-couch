@@ -45,8 +45,8 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     }).then(() => {
       assert.deepEqual(data, [
         {
-          "error": "unknown",
-          "reason": "event source"
+          "error": "event source",
+          "reason": "unknown"
         }
       ]);
     });
