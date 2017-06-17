@@ -48,11 +48,8 @@ export default class EventSourceFeed extends Feed {
   }
 
   onError(e) {
-    var state = e.target.readyState;
-    if(state === e.target.OPEN) {
-      return;
-    }
-    super.onError(new Error({ error: 'unknown', reason: 'event source' }));
+    let readyState = e.target.readyState;
+    super.onError(new Error({ error: 'event source', reason: 'unknown', readyState }));
   }
 
   onHeartbeat() {
