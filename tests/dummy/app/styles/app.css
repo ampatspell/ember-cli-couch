@@ -35,3 +35,11 @@ a {
   .block:last-child {
     padding-bottom: 20px;
   }
+
+.ui-json {
+  white-space: pre;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 10px 0;
+}

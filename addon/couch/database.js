@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import createFileLoader from '../util/file-loader/create';
 import toBase64 from '../util/base64';
+import stringifyUnlessEmpty from '../util/stringify-unless-empty';
+import ChangesMixin from './changes/mixin';
 
 const {
   getOwner,
@@ -12,21 +14,13 @@ const {
   A
 } = Ember;
 
-const stringifyUnlessEmpty = value => {
-  let type = typeOf(value);
-  if(type === 'null' || type === 'undefined') {
-    return;
-  }
-  return JSON.stringify(value);
-};
-
 const lookup = name => {
   return computed(function() {
     return getOwner(this).factoryFor(name).create({ database: this });
   }).readOnly();
 };
 
-export default Ember.Object.extend({
+export default Ember.Object.extend(ChangesMixin, {
 
   couch: null,
   name: null,
@@ -205,6 +199,11 @@ export default Ember.Object.extend({
 
   all(opts) {
     return this._view('_all_docs', opts);
+  },
+
+  createChanges(opts) {
+    opts = merge({ include_docs: true }, opts);
+    return getOwner(this).factoryFor('couch:database-changes').create({ database: this, opts });
   },
 
   willDestroy() {

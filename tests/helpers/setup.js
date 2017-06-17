@@ -14,11 +14,13 @@ const {
 const configs = {
   '1.6': {
     url: '/api/1.6',
-    name: 'ember-cli-couch'
+    name: 'ember-cli-couch',
+    feed: 'event-source'
   },
   '2.0': {
     url: '/api/2.0',
-    name: 'ember-cli-couch'
+    name: 'ember-cli-couch',
+    feed: 'long-polling'
   }
 };
 
@@ -171,4 +173,22 @@ export function cleanup(...dbs) {
   return all(dbs.map(db => {
     return recreate(db);
   }));
+}
+
+export function waitFor(fn) {
+  let start = new Date();
+  return new Promise((resolve, reject) => {
+    let i = setInterval(() => {
+      if(fn()) {
+        resolve();
+        clearInterval(i);
+      } else {
+        let now = new Date();
+        if(now - start > 20000) {
+          reject(new Error('took more than 20 seconds'));
+          clearInterval(i);
+        }
+      }
+    }, 50);
+  });
 }

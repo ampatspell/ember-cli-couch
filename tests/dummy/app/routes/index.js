@@ -12,6 +12,7 @@ export default Ember.Route.extend({
       if(err.status === 404) {
         let message = {
           _id: 'first',
+          type: 'message',
           message: 'To whom it may concern: It is springtime. It is late afternoon.',
           author: 'Kurt Vonnegut'
         };
