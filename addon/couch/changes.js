@@ -11,11 +11,13 @@ export default SuspendableChanges.extend({
       since,
       timeout,
       heartbeat,
+      delay
     } = opts;
 
     return {
       url: `${this.get('couch.url')}/_db_updates`,
       since,
+      delay,
       qs: {
         timeout,
         heartbeat

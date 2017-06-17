@@ -8,8 +8,6 @@ const {
   merge
 } = Ember;
 
-const delay = 3000;
-
 export default class LongPollingFeed extends Feed {
 
   static isSupported() {
@@ -50,7 +48,7 @@ export default class LongPollingFeed extends Feed {
     if(type === 'immediate') {
       cancelable = next(invocation);
     } else if(type === 'delayed') {
-      cancelable = later(invocation, delay);
+      cancelable = later(invocation, this.opts.delay);
     }
 
     this._poll = cancelable;

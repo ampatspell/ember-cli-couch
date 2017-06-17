@@ -1,5 +1,12 @@
+import Ember from 'ember';
 import Feed from './feed';
 import Error from '../../../util/error';
+
+const {
+  run: { later, cancel }
+} = Ember;
+
+const delay = 1000;
 
 export default class EventSourceFeed extends Feed {
 
@@ -41,7 +48,19 @@ export default class EventSourceFeed extends Feed {
       source.removeEventListener(key, this.bound[key], false);
     }
     this.source = null;
+    cancel(this._start);
     super.stop();
+  }
+
+  enqueueRestart() {
+    cancel(this._start);
+    this._start = later(() => {
+      if(!this.started) {
+        return;
+      }
+      this.stop();
+      this.start();
+    }, this.opts.delay);
   }
 
   onOpen() {
@@ -50,6 +69,9 @@ export default class EventSourceFeed extends Feed {
   onError(e) {
     let readyState = e.target.readyState;
     super.onError(new Error({ error: 'event source', reason: 'unknown', readyState }));
+    if(readyState !== e.target.OPEN) {
+      this.enqueueRestart();
+    }
   }
 
   onHeartbeat() {
