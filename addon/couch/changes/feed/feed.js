@@ -25,10 +25,18 @@ const {
   feed.stop();
 
 */
+
+const defaults = opts => {
+  if(!opts.delay) {
+    opts.delay = 3000;
+  }
+  return opts;
+}
+
 export default class Feed {
 
   constructor(opts) {
-    this.opts = merge({ delay: 3000 }, opts);
+    this.opts = defaults(opts);
     this.delegate = null;
     this.started = false;
   }
