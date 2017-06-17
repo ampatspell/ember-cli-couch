@@ -6,8 +6,6 @@ const {
   run: { later, cancel }
 } = Ember;
 
-const delay = 1000;
-
 export default class EventSourceFeed extends Feed {
 
   static isSupported() {

@@ -1,4 +1,9 @@
+import Ember from 'ember';
 import { configurations, cleanup, wait, admin, login, logout } from '../helpers/setup';
+
+const {
+  A
+} = Ember;
 
 configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
 
@@ -31,7 +36,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   });
 
   test('attempt to listen for changes', assert => {
-    let data = Ember.A();
+    let data = A();
     return protect(db).then(() => {
       let changes = db.changes({ delay: 100 });
       changes.on('data', doc => {

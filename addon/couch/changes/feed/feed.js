@@ -28,7 +28,6 @@ const {
 export default class Feed {
 
   constructor(opts) {
-    console.log(opts);
     this.opts = merge({ delay: 3000 }, opts);
     this.delegate = null;
     this.started = false;
