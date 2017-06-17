@@ -13,7 +13,7 @@ export default Changes.extend({
   _suspended: 0,
   _queue: array(),
 
-  suspended: gt('_suspended', 0).readOnly(),
+  isSuspended: gt('_suspended', 0).readOnly(),
 
   _trigger(...args) {
     if(this.get('_suspended') === 0 && this.get('_queue.length') === 0) {
