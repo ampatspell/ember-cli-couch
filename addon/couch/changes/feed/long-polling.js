@@ -3,9 +3,12 @@ import Feed from './feed';
 import { request } from '../../request';
 
 const {
-  run: { next, cancel },
-  RSVP: { resolve }
+  run: { next, later, cancel },
+  RSVP: { resolve },
+  merge
 } = Ember;
+
+const delay = 3000;
 
 export default class LongPollingFeed extends Feed {
 
@@ -26,18 +29,31 @@ export default class LongPollingFeed extends Feed {
       this.nextPoll();
     }, err => {
       this.onError(err);
+      this.nextPoll({ type: 'delayed' });
       return resolve();
     });
   }
 
-  nextPoll() {
-    cancel(this._poll);
-    this._poll = next(() => {
+  nextPoll(opts) {
+    let { type } = merge({ type: 'immediate' }, opts);
+
+    let invocation = () => {
       if(!this.started) {
         return;
       }
       this.poll();
-    });
+    };
+
+    cancel(this._poll);
+
+    let cancelable;
+    if(type === 'immediate') {
+      cancelable = next(invocation);
+    } else if(type === 'delayed') {
+      cancelable = later(invocation, delay);
+    }
+
+    this._poll = cancelable;
   }
 
   start() {
