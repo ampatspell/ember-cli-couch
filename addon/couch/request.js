@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import SofaError from '../util/error';
 import { next } from '../util/run';
-import fetch from "ember-network/fetch";
+import fetch from 'fetch';
 
 const {
   isNone,
