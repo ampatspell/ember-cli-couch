@@ -37,7 +37,7 @@ configurations(({ module, test, createDatabase, config }) => {
     let changes = db.changes();
     assert.deepEqual(changes._feedOptions(), {
       since: undefined,
-      delay: undefined,
+      reconnect: undefined,
       url: `${config.url}/${config.name}/_changes`,
       qs: {
         "attachments": undefined,

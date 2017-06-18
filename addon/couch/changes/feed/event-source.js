@@ -58,7 +58,7 @@ export default class EventSourceFeed extends Feed {
       }
       this.stop();
       this.start();
-    }, this.opts.delay);
+    }, this.opts.reconnect);
   }
 
   onOpen() {

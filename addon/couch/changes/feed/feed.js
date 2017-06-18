@@ -27,8 +27,8 @@ const {
 */
 
 const defaults = opts => {
-  if(!opts.delay) {
-    opts.delay = 3000;
+  if(!opts.reconnect) {
+    opts.reconnect = 3000;
   }
   return opts;
 }

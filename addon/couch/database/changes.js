@@ -20,7 +20,7 @@ export default SuspendableChanges.extend({
       heartbeat,
       doc_ids,
       descending,
-      delay
+      reconnect
     } = opts;
 
     view = view || undefined;
@@ -37,7 +37,7 @@ export default SuspendableChanges.extend({
     return {
       url: `${this.get('database.url')}/_changes`,
       since,
-      delay,
+      reconnect,
       qs: {
         include_docs,
         conflicts,

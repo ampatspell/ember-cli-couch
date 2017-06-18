@@ -56,16 +56,16 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('feed default delay', assert => {
+  test('feed default reconnect delay', assert => {
     let changes = db.changes();
     changes.start();
-    assert.equal(changes.get('_feed').opts.delay, 3000);
+    assert.equal(changes.get('_feed').opts.reconnect, 3000);
   });
 
-  test('feed delay override', assert => {
-    let changes = db.changes({ delay: 1000 });
+  test('feed reconnect delay override', assert => {
+    let changes = db.changes({ reconnect: 1000 });
     changes.start();
-    assert.equal(changes.get('_feed').opts.delay, 1000);
+    assert.equal(changes.get('_feed').opts.reconnect, 1000);
   });
 
 });

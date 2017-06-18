@@ -48,7 +48,7 @@ export default class LongPollingFeed extends Feed {
     if(type === 'immediate') {
       cancelable = next(invocation);
     } else if(type === 'delayed') {
-      cancelable = later(invocation, this.opts.delay);
+      cancelable = later(invocation, this.opts.reconnect);
     }
 
     this._poll = cancelable;

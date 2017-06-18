@@ -38,7 +38,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
   test('attempt to listen for changes', assert => {
     let data = A();
     return protect(db).then(() => {
-      let changes = db.changes({ delay: 100 });
+      let changes = db.changes({ reconnect: 100 });
       changes.on('data', doc => {
         data.push(doc);
       });
