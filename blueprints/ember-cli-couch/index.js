@@ -2,6 +2,6 @@ module.exports = {
   normalizeEntityName: function() {
   },
   afterInstall: function() {
-    return this.addAddonToProject('ember-network', '^0.3.1')
+    return this.addAddonToProject('ember-fetch', '3.0.0')
   }
 };
