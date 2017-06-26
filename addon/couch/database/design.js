@@ -1,9 +1,11 @@
 import Ember from 'ember';
+import buildDeepEqual from '../../util/deep-equal';
+
+const deepEqual = buildDeepEqual({ allowEmberObjects: false });
 
 const {
   merge,
   typeOf,
-  isArray,
   RSVP: { reject }
 } = Ember;
 
@@ -38,40 +40,8 @@ export default Ember.Object.extend({
     return merge({ _id: this.id(name), language: 'javascript' }, this._stringify(hash));
   },
 
-  _typeOf(a) {
-    if(isArray(a)) {
-      return 'array';
-    }
-    return typeOf(a);
-  },
-
   _deepEqual(a, b) {
-    let type = this._typeOf(a);
-    if(type !== this._typeOf(b)) {
-      return false;
-    }
-    if(type === 'object') {
-      if(Object.keys(a).length !== Object.keys(b).length) {
-        return false;
-      }
-      for(let key in a) {
-        if(!this._deepEqual(a[key], b[key])) {
-          return false;
-        }
-      }
-      return true;
-    } else if(type === 'array') {
-      if(a.length !== b.length) {
-        return false;
-      }
-      for(let i = 0; i < a.length; i++) {
-        if(!this._deepEqual(a[i], b[i])) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return a === b;
+    return deepEqual(a, b);
   },
 
   id(name) {
