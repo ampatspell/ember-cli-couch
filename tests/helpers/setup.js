@@ -29,14 +29,13 @@ export const admin = {
   password: 'hello'
 };
 
-const makeModule = (name, cb, app) => {
+const makeModule = (name, cb, state) => {
   qmodule(name, {
     beforeEach(assert) {
       window.currentTestName = `${name}: ${assert.test.testName}`;
       info(`→ ${window.currentTestName}`);
       let done = assert.async();
-      app.start();
-      console.log('started', assert);
+      state.start();
       resolve().then(() => cb()).catch(err => {
         error(err);
         error(err.stack);
@@ -46,25 +45,27 @@ const makeModule = (name, cb, app) => {
     afterEach(assert) {
       let done = assert.async();
       run(() => {
-        app.destroy();
+        state.destroy();
         run.next(() => done());
       });
     },
   });
 }
 
-class Application {
+class State {
   start() {
-    console.log('start app');
     this.application = startApp();
-    this.instance = application.buildInstance();
+    this.instance = this.application.buildInstance();
   }
   destroy() {
-    console.log('destroy');
     this.instance.destroy();
     this.application.destroy();
+    this.instance = null;
+    this.application = null;
   }
 }
+
+let state = new State();
 
 export function configurations(opts, body) {
   if(typeof opts === 'function') {
@@ -82,15 +83,15 @@ export function configurations(opts, body) {
       continue;
     }
     let config = merge({ key }, configs[key]);
-    let app = new Application();
     body({
       config,
-      app,
+      state,
       test,
       module(name, cb) {
-        return makeModule(`${name} [${config.key}]`, cb, app)
+        return makeModule(`${name} [${config.key}]`, cb, state)
       },
       createDatabase() {
+
       }
     });
   }
