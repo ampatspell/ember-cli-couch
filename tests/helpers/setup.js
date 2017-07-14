@@ -5,7 +5,7 @@ import startApp from './start-app';
 import extendAssert from './extend-assert';
 
 const {
-  RSVP: { Promise, resolve, all },
+  RSVP: { Promise, resolve, reject, all },
   Logger: { info, error },
   run,
   merge
@@ -24,120 +24,56 @@ const configs = {
   }
 };
 
-let app;
-let container;
-let destroyables = [];
+export const admin = {
+  name: 'ampatspell',
+  password: 'hello'
+};
 
-export function module(name, cb) {
+const makeModule = (name, cb, app) => {
   qmodule(name, {
-    beforeEach: function(assert) {
+    beforeEach(assert) {
       window.currentTestName = `${name}: ${assert.test.testName}`;
       info(`→ ${window.currentTestName}`);
       let done = assert.async();
-      app = startApp();
-      container = app.__container__;
-      resolve().then(function() {
-        return cb(container);
-      }).then(function() {
-        done();
-      });
+      app.start();
+      console.log('started', assert);
+      resolve().then(() => cb()).catch(err => {
+        error(err);
+        error(err.stack);
+        return reject(err);
+      }).finally(() => done());
     },
-    afterEach: function(assert) {
+    afterEach(assert) {
       let done = assert.async();
       run(() => {
-        destroyables.forEach(item => item.destroy());
-        destroyables = [];
         app.destroy();
-        run.next(() => {
-          done();
-        });
+        run.next(() => done());
       });
     },
   });
 }
 
-function q(fn, name, cb) {
-  return fn(name, function(assert) {
-    extendAssert(assert);
-    let done = assert.async();
-    resolve().then(function() {
-      return cb(assert);
-    }).then(function() {
-      done();
-    }, function(err) {
-      error(err);
-      error(err.stack);
-      assert.ok(false, err.stack);
-      done();
-    });
-  });
+class Application {
+  start() {
+    console.log('start app');
+    this.application = startApp();
+    this.instance = application.buildInstance();
+  }
+  destroy() {
+    console.log('destroy');
+    this.instance.destroy();
+    this.application.destroy();
+  }
 }
 
-export function test(name, cb) {
-  return q(qtest, name, cb);
-}
-
-export function only(name, cb) {
-  return q(qonly, name, cb);
-}
-
-test.only = only;
-test.skip = skip;
-
-export function next(arg) {
-  return new Promise(function(resolve) {
-    run.next(function() {
-      resolve(arg);
-    });
-  });
-}
-
-export function wait(arg, delay) {
-  return new Promise(function(resolve) {
-    run.later(function() {
-      resolve(arg);
-    }, delay);
-  });
-}
-
-export function createCouches() {
-  let couches = container.factoryFor('couch:couches').create();
-  destroyables.push(couches);
-  return couches;
-}
-
-export function createCouch(couches, url) {
-  return couches.couch({ url });
-}
-
-export function createDatabase(couch, name) {
-  return couch.database(name);
-}
-
-export function configurations(opts, fn) {
+export function configurations(opts, body) {
   if(typeof opts === 'function') {
-    fn = opts;
+    body = opts;
     opts = {};
   }
 
-  let invoke = (name, url, config) => {
-    fn({
-      module(moduleName, cb) {
-        moduleName = `${moduleName} [${name}]`;
-        return module(moduleName, cb);
-      },
-      test,
-      createDatabase() {
-        return createDatabase(createCouch(createCouches(), config.url), config.name);
-      },
-      config
-    });
-  };
-
-  let only = opts.only;
-  if(!only) {
-    only = [];
-  } else if(typeof only === 'string') {
+  let only = opts.only || [];
+  if(typeof only === 'string') {
     only = [ only ];
   }
 
@@ -145,50 +81,180 @@ export function configurations(opts, fn) {
     if(only.length > 0 && only.indexOf(key) === -1) {
       continue;
     }
-    let value = configs[key];
-    invoke(key, value.url, merge({ key }, value));
+    let config = merge({ key }, configs[key]);
+    let app = new Application();
+    body({
+      config,
+      app,
+      test,
+      module(name, cb) {
+        return makeModule(`${name} [${config.key}]`, cb, app)
+      },
+      createDatabase() {
+      }
+    });
   }
 }
 
-export const admin = {
-  name: 'ampatspell',
-  password: 'hello'
+function q(fn, name, cb) {
+  return fn(name, assert => {
+    extendAssert(assert);
+    let done = assert.async();
+    resolve().then(() => cb(assert)).catch(err => {
+      error(err);
+      error(err.stack);
+      assert.ok(false, err.stack);
+    }).finally(() => done());
+  });
+}
+
+function test(name, cb) {
+  return q(qtest, name, cb);
+}
+
+function only(name, cb) {
+  return q(qonly, name, cb);
+}
+
+test.only = only;
+test.skip = skip;
+
+
+// let app;
+// let container;
+// let destroyables = [];
+
+// export function module(name, cb) {
+//   qmodule(name, {
+//     beforeEach: function(assert) {
+//       window.currentTestName = `${name}: ${assert.test.testName}`;
+//       info(`→ ${window.currentTestName}`);
+//       let done = assert.async();
+//       app = startApp();
+//       container = app.__container__;
+//       resolve().then(function() {
+//         return cb(container);
+//       }).then(function() {
+//         done();
+//       });
+//     },
+//     afterEach: function(assert) {
+//       let done = assert.async();
+//       run(() => {
+//         destroyables.forEach(item => item.destroy());
+//         destroyables = [];
+//         app.destroy();
+//         run.next(() => {
+//           done();
+//         });
+//       });
+//     },
+//   });
+// }
+
+// export function next(arg) {
+//   return new Promise(function(resolve) {
+//     run.next(function() {
+//       resolve(arg);
+//     });
+//   });
+// }
+
+// export function wait(arg, delay) {
+//   return new Promise(function(resolve) {
+//     run.later(function() {
+//       resolve(arg);
+//     }, delay);
+//   });
+// }
+
+// export function createCouches() {
+//   let couches = container.factoryFor('couch:couches').create();
+//   destroyables.push(couches);
+//   return couches;
+// }
+
+// export function createCouch(couches, url) {
+//   return couches.couch({ url });
+// }
+
+// export function createDatabase(couch, name) {
+//   return couch.database(name);
+// }
+
+// export function configurations(opts, fn) {
+//   if(typeof opts === 'function') {
+//     fn = opts;
+//     opts = {};
+//   }
+
+//   let invoke = (name, url, config) => {
+//     fn({
+//       module(moduleName, cb) {
+//         moduleName = `${moduleName} [${name}]`;
+//         return module(moduleName, cb);
+//       },
+//       test,
+//       createDatabase() {
+//         return createDatabase(createCouch(createCouches(), config.url), config.name);
+//       },
+//       config
+//     });
+//   };
+
+//   let only = opts.only;
+//   if(!only) {
+//     only = [];
+//   } else if(typeof only === 'string') {
+//     only = [ only ];
+//   }
+
+//   for(let key in configs) {
+//     if(only.length > 0 && only.indexOf(key) === -1) {
+//       continue;
+//     }
+//     let value = configs[key];
+//     invoke(key, value.url, merge({ key }, value));
+//   }
+// }
+
+// export function login(db) {
+//   return db.get('couch.session').save(admin.name, admin.password);
+// }
+
+// export function logout(db) {
+//   return db.get('couch.session').delete();
+// }
+
+// export function recreate(db) {
+//   return login(db).then(() => {
+//     return db.get('database').recreate({ design: true });
+//   });
+// }
+
+// export function cleanup(...dbs) {
+//   return all(dbs.map(db => {
+//     return recreate(db);
+//   }));
+// }
+
+// export function waitFor(fn) {
+//   let start = new Date();
+//   return new Promise((resolve, reject) => {
+//     let i = setInterval(() => {
+//       if(fn()) {
+//         resolve();
+//         clearInterval(i);
+//       } else {
+//         let now = new Date();
+//         if(now - start > 20000) {
+//           reject(new Error('took more than 20 seconds'));
+//           clearInterval(i);
+//         }
+//       }
+//     }, 50);
+//   });
+// }
+
+export function cleanup() {
 };
-
-export function login(db) {
-  return db.get('couch.session').save(admin.name, admin.password);
-}
-
-export function logout(db) {
-  return db.get('couch.session').delete();
-}
-
-export function recreate(db) {
-  return login(db).then(() => {
-    return db.get('database').recreate({ design: true });
-  });
-}
-
-export function cleanup(...dbs) {
-  return all(dbs.map(db => {
-    return recreate(db);
-  }));
-}
-
-export function waitFor(fn) {
-  let start = new Date();
-  return new Promise((resolve, reject) => {
-    let i = setInterval(() => {
-      if(fn()) {
-        resolve();
-        clearInterval(i);
-      } else {
-        let now = new Date();
-        if(now - start > 20000) {
-          reject(new Error('took more than 20 seconds'));
-          clearInterval(i);
-        }
-      }
-    }, 50);
-  });
-}
