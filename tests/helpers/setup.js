@@ -25,46 +25,72 @@ const configs = {
 };
 
 export const admin = {
-  name: 'ampatspell',
+  name: 'admin',
   password: 'hello'
 };
 
-const makeModule = (name, cb, state) => {
+const _catch = err => {
+  error(err);
+  error(err.stack);
+  return reject(err);
+};
+
+const makeModule = (name, cb, config, state) => {
   qmodule(name, {
     beforeEach(assert) {
       window.currentTestName = `${name}: ${assert.test.testName}`;
       info(`→ ${window.currentTestName}`);
       let done = assert.async();
-      state.start();
-      resolve().then(() => cb()).catch(err => {
-        error(err);
-        error(err.stack);
-        return reject(err);
-      }).finally(() => done());
+      state.start(config).then(() => cb()).catch(_catch).finally(() => done());
     },
     afterEach(assert) {
       let done = assert.async();
-      run(() => {
-        state.destroy();
-        run.next(() => done());
-      });
+      state.destroy().catch(_catch).finally(() => done());
     },
   });
 }
 
 class State {
-  start() {
+  constructor() {
+    this.keys = [];
+  }
+  start(config) {
     this.application = startApp();
     this.instance = this.application.buildInstance();
+    console.log('start', this.application);
+    return this.once(config);
+  }
+  _createSystemDatabases(config) {
+    let couch = this.couch(config.url);
+    let dbs = [ '_global_changes', '_metadata', '_replicator', '_users' ];
+    return resolve()
+      .then(() => couch.get('session').save(admin.name, admin.password))
+      .then(() => all(dbs.map(name => couch.database(name).get('database').create({ optional: true }))));
+  }
+  _once(config) {
+    if(config.key === '2.0') {
+      return this._createSystemDatabases(config);
+    }
+    return resolve();
+  }
+  once(config) {
+    let { key } = config;
+    if(this.keys.includes(key)) {
+      return resolve();
+    }
+    this.keys.push(key);
+    return this._once(config);
   }
   destroy() {
-    if(this._couches) {
-      this._couches.destroy();
-    }
-    this.instance.destroy();
-    this.application.destroy();
-    this.instance = null;
-    this.application = null;
+    return next().then(() => {
+      if(this._couches) {
+        this._couches.destroy();
+      }
+      this.instance.destroy();
+      this.application.destroy();
+      this.instance = null;
+      this.application = null;
+    }).then(() => next());
   }
   get couches() {
     let couches = this._couches;
@@ -105,7 +131,7 @@ export function configurations(opts, body) {
       state,
       test,
       module(name, cb) {
-        return makeModule(`${name} [${config.key}]`, cb, state)
+        return makeModule(`${name} [${config.key}]`, cb, config, state)
       },
       createDatabase() {
         return state.createDatabase(config.url, config.name);
