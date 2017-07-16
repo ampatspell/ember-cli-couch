@@ -57,7 +57,6 @@ class State {
   start(config) {
     this.application = startApp();
     this.instance = this.application.buildInstance();
-    console.log('start', this.application);
     return this.once(config);
   }
   _createSystemDatabases(config) {
@@ -85,12 +84,14 @@ class State {
     return next().then(() => {
       if(this._couches) {
         this._couches.destroy();
+        this._couches = null;
       }
+    }).then(() => {
       this.instance.destroy();
-      this.application.destroy();
       this.instance = null;
+      this.application.destroy();
       this.application = null;
-    }).then(() => next());
+    });
   }
   get couches() {
     let couches = this._couches;
