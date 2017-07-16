@@ -5,7 +5,7 @@ import startApp from './start-app';
 import extendAssert from './extend-assert';
 
 const {
-  RSVP: { Promise, resolve, all },
+  RSVP: { Promise, resolve, reject, all },
   Logger: { info, error },
   run,
   merge
@@ -24,120 +24,101 @@ const configs = {
   }
 };
 
-let app;
-let container;
-let destroyables = [];
+export const admin = {
+  name: 'admin',
+  password: 'hello'
+};
 
-export function module(name, cb) {
+const _catch = err => {
+  error(err);
+  error(err.stack);
+  return reject(err);
+};
+
+const makeModule = (name, cb, config, state) => {
   qmodule(name, {
-    beforeEach: function(assert) {
+    beforeEach(assert) {
       window.currentTestName = `${name}: ${assert.test.testName}`;
       info(`→ ${window.currentTestName}`);
       let done = assert.async();
-      app = startApp();
-      container = app.__container__;
-      resolve().then(function() {
-        return cb(container);
-      }).then(function() {
-        done();
-      });
+      state.start(config).then(() => cb()).catch(_catch).finally(() => done());
     },
-    afterEach: function(assert) {
+    afterEach(assert) {
       let done = assert.async();
-      run(() => {
-        destroyables.forEach(item => item.destroy());
-        destroyables = [];
-        app.destroy();
-        run.next(() => {
-          done();
-        });
-      });
+      state.destroy().catch(_catch).finally(() => done());
     },
   });
 }
 
-function q(fn, name, cb) {
-  return fn(name, function(assert) {
-    extendAssert(assert);
-    let done = assert.async();
-    resolve().then(function() {
-      return cb(assert);
-    }).then(function() {
-      done();
-    }, function(err) {
-      error(err);
-      error(err.stack);
-      assert.ok(false, err.stack);
-      done();
+class State {
+  constructor() {
+    this.keys = [];
+  }
+  start(config) {
+    this.application = startApp();
+    this.instance = this.application.buildInstance();
+    return this.once(config);
+  }
+  _createSystemDatabases(config) {
+    let couch = this.couch(config.url);
+    let dbs = [ '_global_changes', '_metadata', '_replicator', '_users' ];
+    return resolve()
+      .then(() => couch.get('session').save(admin.name, admin.password))
+      .then(() => all(dbs.map(name => couch.database(name).get('database').create({ optional: true }))));
+  }
+  _once(config) {
+    if(config.key === '2.0') {
+      return this._createSystemDatabases(config);
+    }
+    return resolve();
+  }
+  once(config) {
+    let { key } = config;
+    if(this.keys.includes(key)) {
+      return resolve();
+    }
+    this.keys.push(key);
+    return this._once(config);
+  }
+  destroy() {
+    return next().then(() => {
+      if(this._couches) {
+        this._couches.destroy();
+        this._couches = null;
+      }
+    }).then(() => {
+      this.instance.destroy();
+      this.instance = null;
+      this.application.destroy();
+      this.application = null;
     });
-  });
+  }
+  get couches() {
+    let couches = this._couches;
+    if(!couches) {
+      couches = this.instance.factoryFor('couch:couches').create();
+      this._couches = couches;
+    }
+    return couches;
+  }
+  couch(url) {
+    return this.couches.couch({ url });
+  }
+  createDatabase(url, name) {
+    return this.couch(url).database(name);
+  }
 }
 
-export function test(name, cb) {
-  return q(qtest, name, cb);
-}
+let state = new State();
 
-export function only(name, cb) {
-  return q(qonly, name, cb);
-}
-
-test.only = only;
-test.skip = skip;
-
-export function next(arg) {
-  return new Promise(function(resolve) {
-    run.next(function() {
-      resolve(arg);
-    });
-  });
-}
-
-export function wait(arg, delay) {
-  return new Promise(function(resolve) {
-    run.later(function() {
-      resolve(arg);
-    }, delay);
-  });
-}
-
-export function createCouches() {
-  let couches = container.factoryFor('couch:couches').create();
-  destroyables.push(couches);
-  return couches;
-}
-
-export function createCouch(couches, url) {
-  return couches.couch({ url });
-}
-
-export function createDatabase(couch, name) {
-  return couch.database(name);
-}
-
-export function configurations(opts, fn) {
+export function configurations(opts, body) {
   if(typeof opts === 'function') {
-    fn = opts;
+    body = opts;
     opts = {};
   }
 
-  let invoke = (name, url, config) => {
-    fn({
-      module(moduleName, cb) {
-        moduleName = `${moduleName} [${name}]`;
-        return module(moduleName, cb);
-      },
-      test,
-      createDatabase() {
-        return createDatabase(createCouch(createCouches(), config.url), config.name);
-      },
-      config
-    });
-  };
-
-  let only = opts.only;
-  if(!only) {
-    only = [];
-  } else if(typeof only === 'string') {
+  let only = opts.only || [];
+  if(typeof only === 'string') {
     only = [ only ];
   }
 
@@ -145,37 +126,57 @@ export function configurations(opts, fn) {
     if(only.length > 0 && only.indexOf(key) === -1) {
       continue;
     }
-    let value = configs[key];
-    invoke(key, value.url, merge({ key }, value));
+    let config = merge({ key }, configs[key]);
+    body({
+      config,
+      state,
+      test,
+      module(name, cb) {
+        return makeModule(`${name} [${config.key}]`, cb, config, state)
+      },
+      createDatabase() {
+        return state.createDatabase(config.url, config.name);
+      }
+    });
   }
 }
 
-export const admin = {
-  name: 'ampatspell',
-  password: 'hello'
-};
-
-export function login(db) {
-  return db.get('couch.session').save(admin.name, admin.password);
-}
-
-export function logout(db) {
-  return db.get('couch.session').delete();
-}
-
-export function recreate(db) {
-  return login(db).then(() => {
-    return db.get('database').recreate({ design: true });
+function q(fn, name, cb) {
+  return fn(name, assert => {
+    extendAssert(assert);
+    let done = assert.async();
+    resolve().then(() => cb(assert)).catch(err => {
+      error(err);
+      error(err.stack);
+      assert.ok(false, err.stack);
+    }).finally(() => done());
   });
 }
 
-export function cleanup(...dbs) {
-  return all(dbs.map(db => {
-    return recreate(db);
-  }));
+function test(name, cb) {
+  return q(qtest, name, cb);
 }
 
-export function waitFor(fn) {
+function only(name, cb) {
+  return q(qonly, name, cb);
+}
+
+test.only = only;
+test.skip = skip;
+
+export const next = arg => new Promise(resolve => run.next(() => resolve(arg)));
+
+export const wait = (arg, delay) => new Promise(resolve => run.later(() => resolve(arg), delay));
+
+export const login = db => db.get('couch.session').save(admin.name, admin.password);
+
+export const logout = db => db.get('couch.session').delete();
+
+export const recreate = db => login(db).then(() => db.get('database').recreate({ design: true }));
+
+export const cleanup = (...dbs) => all(dbs.map(db => recreate(db)));
+
+export const waitFor = fn => {
   let start = new Date();
   return new Promise((resolve, reject) => {
     let i = setInterval(() => {
