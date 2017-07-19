@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { composeURL } from '../../request';
+import { composeURL } from '../../request/request';
 
 const {
   merge

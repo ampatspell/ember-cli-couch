@@ -1,13 +1,14 @@
 import Ember from 'ember';
-import SofaError from '../util/error';
-import { next } from '../util/run';
+import SofaError from '../../util/error';
+import { next } from '../../util/run';
 import fetch from 'fetch';
 
 const {
   isNone,
   RSVP: { resolve, reject },
   merge,
-  A
+  A,
+  getOwner
 } = Ember;
 
 function wrap(promise) {

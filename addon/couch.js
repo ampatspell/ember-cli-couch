@@ -2,6 +2,7 @@ import Ember from 'ember';
 import { object } from './util/computed';
 import { destroyObject } from './util/destroy';
 import Changes from './couch/changes/mixin';
+import Request from './couch/request/mixin';
 
 const {
   computed,
@@ -27,7 +28,9 @@ const session = () => {
   }).readOnly();
 };
 
-export default Ember.Object.extend(Changes, {
+export default Ember.Object.extend(
+  Changes,
+  Request, {
 
   couches: null,
   url: null,
@@ -38,15 +41,11 @@ export default Ember.Object.extend(Changes, {
 
   session: session(),
 
-  _request: computed(function() {
-    return getOwner(this).factoryFor('couch:request').create();
-  }).readOnly(),
-
   request(opts) {
     let url = this.get("normalizedUrl");
     opts = opts || {};
     opts.url = opts.url ? [url, opts.url].join('') : url;
-    return this.get('_request').send(opts);
+    return this._super(opts);
   },
 
   info() {

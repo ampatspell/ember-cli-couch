@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import Feed from './feed';
-import { request } from '../../request';
+import { request } from '../../request/request';
 
 const {
   run: { next, later, cancel },
