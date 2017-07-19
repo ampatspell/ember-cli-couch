@@ -5,15 +5,19 @@ import fetch from 'fetch';
 
 const {
   isNone,
-  RSVP: { reject },
+  RSVP: { resolve, reject },
   merge,
   A
 } = Ember;
 
+function wrap(promise) {
+  return resolve(promise).then(res => resolve(res), err => reject(err));
+}
+
 function raw(opts) {
   let url = opts.url;
   delete opts.url;
-  return fetch(url, opts);
+  return wrap(fetch(url, opts));
 }
 
 function rejectResponse(resp) {
@@ -37,7 +41,7 @@ function ajax(opts) {
     if(!json) {
       return resp;
     }
-    return resp.json();
+    return wrap(resp.json());
   }, err => {
     return rejectError(err);
   });
