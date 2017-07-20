@@ -39,7 +39,7 @@ configurations(({ module, test, createDatabase, config }) => {
       data.push(doc);
     });
     changes.start();
-    return wait(null, 1000).then(() => {
+    return wait(null, 1500).then(() => {
       return all([
         db.save({ _id: 'foo', type: 'thing' }),
         db.save({ _id: 'bar', type: 'duck' })
@@ -47,7 +47,7 @@ configurations(({ module, test, createDatabase, config }) => {
     }).then(([ foo ]) => {
       return db.save({ _id: 'foo', _rev: foo.rev, _deleted: true, type: 'thing' });
     }).then(() => {
-      return wait(null, 1000);
+      return wait(null, 1500);
     }).then(() => {
       assert.deepEqual_(data.map(row => row.doc), [
         {
