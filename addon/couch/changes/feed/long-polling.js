@@ -22,8 +22,8 @@ export default class LongPollingFeed extends Feed {
 
   poll() {
     let url = this.url;
-    request({ type: 'get', url, json: true }).then(data => {
-      this.onMessage(data);
+    request({ type: 'get', url, json: true }).then(({ json }) => {
+      this.onMessage(json);
       this.nextPoll();
     }, err => {
       this.onError(err);
