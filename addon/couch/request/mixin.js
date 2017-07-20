@@ -13,6 +13,7 @@ const fastboot = () => {
 };
 
 const AuthSession = 'AuthSession';
+const HTTP = /^(http|https):\/\//;
 
 export default Ember.Mixin.create({
 
@@ -46,6 +47,12 @@ export default Ember.Mixin.create({
       if(cookie) {
         opts.headers = opts.headers || {};
         opts.headers.cookie = cookie;
+      }
+      opts.url = opts.url || '';
+      if(!HTTP.test(opts.url)) {
+        let request = this.get('_fastboot.request');
+        let { protocol, host } = request.getProperties('protocol', 'host');
+        opts.url = `${protocol}//${host}${opts.url}`;
       }
     }
     return opts;
