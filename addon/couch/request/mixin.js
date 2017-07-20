@@ -2,7 +2,8 @@ import Ember from 'ember';
 
 const {
   getOwner,
-  computed
+  computed,
+  computed: { reads }
 } = Ember;
 
 const fastboot = () => {
@@ -11,26 +12,7 @@ const fastboot = () => {
   }).readOnly();
 };
 
-let iter = 0;
-
-const cookies = () => {
-  return computed('_fastboot', function() {
-    let fastboot = getOwner(this).lookup('service:fastboot');
-    if(!fastboot) {
-      return;
-    }
-    let cookies = fastboot.get('request.cookies');
-    if(!cookies) {
-      return;
-    }
-    let array = [];
-    for(let key in cookies) {
-      array.push(`${key}=${encodeURIComponent(cookies[key])}`);
-    }
-    array.push(`ember-cli-fastboot=${iter++}`);
-    return array.join('; ');
-  }).volatile().readOnly();
-};
+const AuthSession = 'AuthSession';
 
 export default Ember.Mixin.create({
 
@@ -39,18 +21,55 @@ export default Ember.Mixin.create({
   }).readOnly(),
 
   _fastboot: fastboot(),
-  _cookies: cookies(),
+  _isFastBoot: reads('_fastboot.isFastBoot'),
+
+  _getFastbootRequestCookie() {
+    let cookies = this.get('_fastboot.request.cookies');
+    if(!cookies) {
+      return;
+    }
+    let cookie = cookies[AuthSession];
+    if(!cookie) {
+      return;
+    }
+    return `${AuthSession}=${encodeURIComponent(cookie)}`;
+  },
+
+  _setFastbootResponseCookie(cookie) {
+    let headers = this.get('_fastboot.response.headers');
+    headers.append('set-cookie', cookie);
+  },
+
+  _willSendRequest(opts) {
+    if(this.get('_isFastBoot')) {
+      let cookie = this._getFastbootRequestCookie();
+      if(cookie) {
+        opts.headers = opts.headers || {};
+        opts.headers.cookie = cookie;
+      }
+    }
+    return opts;
+  },
+
+  _didReceiveResponse(hash) {
+    if(this.get('_isFastBoot')) {
+      let res = hash.res;
+      let cookie = res.headers.get('set-cookie');
+      if(cookie) {
+        this._setFastbootResponseCookie(cookie);
+      }
+    }
+    return hash;
+  },
 
   request(opts) {
-    let cookies = this.get('_cookies');
-    if(cookies) {
-      opts.headers = opts.headers || {};
-      opts.headers.cookie = cookies;
-    }
-    console.log(opts);
-    return this.get('_request').send(opts).then(res => {
-      console.log(res);
-      return res;
+    opts = this._willSendRequest(opts);
+    return this.get('_request').send(opts).then(hash => {
+      hash = this._didReceiveResponse(hash);
+      if(hash.raw) {
+        return hash.res;
+      }
+      return hash.json;
     });
   }
 

@@ -7,8 +7,7 @@ const {
   isNone,
   RSVP: { resolve, reject },
   merge,
-  A,
-  getOwner
+  A
 } = Ember;
 
 function wrap(promise) {
@@ -35,14 +34,14 @@ function rejectError(err) {
 function ajax(opts) {
   let json = opts.json;
   delete opts.json;
-  return raw(opts).then(resp => {
-    if(resp.status >= 400) {
-      return rejectResponse(resp);
+  return raw(opts).then(res => {
+    if(res.status >= 400) {
+      return rejectResponse(res);
     }
     if(!json) {
-      return resp;
+      return { res, raw: true };
     }
-    return wrap(resp.json());
+    return wrap(res.json()).then(json => ({ res, json, raw: false }));
   }, err => {
     return rejectError(err);
   });
@@ -73,6 +72,10 @@ export function composeURL(url, qs) {
 export function request(opts) {
   opts = opts || {};
 
+  if(!Object.hasOwnProperty(opts, 'json')) {
+    opts.json = true;
+  }
+
   opts.url = composeURL(opts.url, opts.qs);
 
   if(opts.json === true) {
@@ -95,9 +98,7 @@ export function request(opts) {
 export default Ember.Object.extend({
 
   send(opts) {
-    return request(opts).then(result => {
-      return next().then(() => result);
-    });
+    return request(opts).then(result => next().then(() => result));
   }
 
 });
