@@ -51,7 +51,7 @@ export default SuspendableChanges.extend({
         doc_ids: stringifyUnlessEmpty(doc_ids),
         view,
         filter
-      },
+      }
     };
   },
 
