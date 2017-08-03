@@ -14,14 +14,23 @@ export default SuspendableChanges.extend({
       reconnect
     } = opts;
 
+    let url = this.get('couch.url');
+
     return {
-      url: `${this.get('couch.url')}/_db_updates`,
+      url: `${url}/_db_updates`,
       since,
       reconnect,
       qs: {
         timeout,
         heartbeat
       }
+    };
+  },
+
+  _feedContext() {
+    let couch = this.get('couch');
+    return {
+      request: opts => couch._request(opts)
     };
   },
 

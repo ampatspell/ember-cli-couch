@@ -12,8 +12,8 @@ export default class EventSourceFeed extends Feed {
     return typeof(EventSource) !== "undefined";
   }
 
-  constructor(opts) {
-    super(opts);
+  constructor(opts, context) {
+    super(opts, context);
     this.source = null;
     this.bound = {
       open: this.onOpen.bind(this),

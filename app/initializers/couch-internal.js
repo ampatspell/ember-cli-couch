@@ -1,6 +1,6 @@
 import Couches from 'couch/couches';
 import Couch from 'couch/couch';
-import Request from 'couch/couch/request';
+import Request from 'couch/couch/request/request';
 import Session from 'couch/couch/session';
 import Databases from 'couch/couch/database/databases';
 import Database from 'couch/couch/database';

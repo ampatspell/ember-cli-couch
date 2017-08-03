@@ -6,8 +6,8 @@ const {
 
 export default Superclass => class extends Superclass {
 
-  constructor(opts) {
-    super(opts);
+  constructor(opts, context) {
+    super(opts, context);
     this.since = opts.since || undefined;
   }
 
