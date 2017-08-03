@@ -31,3 +31,13 @@ export const fastboot = () => {
     return getOwner(this).lookup('service:fastboot');
   }).readOnly();
 };
+
+export const isFastBoot = () => {
+  return computed(function() {
+    let fastboot = getOwner(this).lookup('service:fastboot');
+    if(!fastboot) {
+      return false;
+    }
+    return !!fastboot.get('isFastBoot');
+  }).readOnly();
+}

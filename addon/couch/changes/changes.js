@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import assert from '../../util/assert';
+import { isFastBoot } from '../../util/computed';
 
 const {
   getOwner,
@@ -11,7 +12,18 @@ const {
 
 export const defaultFeedIdentifiers = [ 'event-source', 'long-polling' ];
 
+const inBrowser = fn => {
+  return function(...args) {
+    if(this.get('_isFastBoot')) {
+      return;
+    }
+    return fn.call(this, ...args);
+  };
+}
+
 export default Ember.Object.extend(Evented, {
+
+  _isFastBoot: isFastBoot(),
 
   isStarted: false,
 
@@ -51,7 +63,7 @@ export default Ember.Object.extend(Evented, {
     return this._createFeed(Feed);
   },
 
-  start() {
+  start: inBrowser(function() {
     if(this.get('isStarted')) {
       return;
     }
@@ -62,9 +74,9 @@ export default Ember.Object.extend(Evented, {
       _feed: feed,
       isStarted: true
     });
-  },
+  }),
 
-  stop() {
+  stop: inBrowser(function() {
     if(!this.get('isStarted')) {
       return;
     }
@@ -76,12 +88,12 @@ export default Ember.Object.extend(Evented, {
       isStarted: false,
       opts: merge(this.get('opts'), opts)
     });
-  },
+  }),
 
-  restart() {
+  restart: inBrowser(function() {
     this.stop();
     this.start();
-  },
+  }),
 
   willDestroy() {
     this.stop();
