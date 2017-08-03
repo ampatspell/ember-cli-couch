@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import isAbsoluteURL from '../../util/is-absolute-url';
+import { fastboot } from '../../util/computed';
 
 const {
   getOwner,
@@ -10,12 +11,6 @@ const {
 const request = () => {
   return computed(function() {
     return getOwner(this).factoryFor('couch:request').create();
-  }).readOnly();
-};
-
-const fastboot = () => {
-  return computed(function() {
-    return getOwner(this).lookup('service:fastboot');
   }).readOnly();
 };
 
