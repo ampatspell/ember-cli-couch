@@ -12,6 +12,10 @@ const fastboot = () => {
   }).readOnly();
 };
 
+const isFastBoot = () => {
+  return reads('_fastboot.isFastBoot').readOnly();
+};
+
 const AuthSession = 'AuthSession';
 const HTTP = /^(http|https):\/\//;
 
@@ -22,7 +26,7 @@ export default Ember.Mixin.create({
   }).readOnly(),
 
   _fastboot: fastboot(),
-  _isFastBoot: reads('_fastboot.isFastBoot'),
+  _isFastBoot: isFastBoot(),
 
   _getFastbootRequestCookie() {
     let cookies = this.get('_fastboot.request.cookies');
