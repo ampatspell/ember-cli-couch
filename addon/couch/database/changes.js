@@ -34,8 +34,10 @@ export default SuspendableChanges.extend({
       filter = '_doc_ids';
     }
 
+    let url = this.get('database.url');
+
     return {
-      url: `${this.get('database.url')}/_changes`,
+      url: `${url}/_changes`,
       since,
       reconnect,
       qs: {
@@ -50,6 +52,13 @@ export default SuspendableChanges.extend({
         view,
         filter
       },
+    };
+  },
+
+  _feedContext() {
+    let couch = this.get('database.couch');
+    return {
+      request: opts => couch._request(opts)
     };
   },
 

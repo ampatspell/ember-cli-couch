@@ -1,37 +1,33 @@
 import Ember from 'ember';
-import SofaError from '../../util/error';
-import { next } from '../../util/run';
 import fetch from 'fetch';
+import SofaError from '../../util/error';
+import composeURL from '../../util/compose-url';
+import wrap from '../../util/wrap-promise';
+import { next } from '../../util/run';
 
 const {
-  isNone,
-  RSVP: { resolve, reject },
-  merge,
-  A
+  RSVP: { reject },
+  merge
 } = Ember;
 
-function wrap(promise) {
-  return resolve(promise).then(res => resolve(res), err => reject(err));
-}
-
-function raw(opts) {
+const raw = opts => {
   let url = opts.url;
   delete opts.url;
   return wrap(fetch(url, opts));
 }
 
-function rejectResponse(resp) {
+const rejectResponse = resp => {
   return resp.json().then(json => {
     json.status = resp.status;
     return reject(new SofaError(json));
   });
 }
 
-function rejectError(err) {
+const rejectError = err => {
   return reject(new SofaError({ error: 'request', reason: err.message }));
 }
 
-function ajax(opts) {
+const ajax = opts => {
   let json = opts.json;
   delete opts.json;
   return raw(opts).then(res => {
@@ -47,29 +43,7 @@ function ajax(opts) {
   });
 }
 
-function objectToQueryString(obj) {
-  if(!obj) {
-    return;
-  }
-  let pairs = A();
-  for(let key in obj) {
-    let value = obj[key];
-    if(!isNone(value)) {
-      pairs.push([key, encodeURIComponent(value)].join('='));
-    }
-  }
-  return pairs.join('&');
-}
-
-export function composeURL(url, qs) {
-  qs = objectToQueryString(qs);
-  if(qs) {
-    return `${url}?${qs}`;
-  }
-  return url;
-}
-
-export function request(opts) {
+const request = opts => {
   opts = opts || {};
 
   if(!Object.hasOwnProperty(opts, 'json')) {

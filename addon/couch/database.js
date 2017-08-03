@@ -47,10 +47,16 @@ export default Ember.Object.extend(ChangesMixin, {
     return components.join('/');
   }).readOnly(),
 
-  request(opts) {
-    opts = opts || {};
+  resolveURL(path) {
     let name = encodeURIComponent(this.get('name'));
-    opts.url = opts.url ? `${name}/${opts.url}` : name;
+    if(path) {
+      return `${name}/${path}`;
+    }
+    return name;
+  },
+
+  request(opts={}) {
+    opts.url = this.resolveURL(opts.url);
     return this.get('couch').request(opts);
   },
 

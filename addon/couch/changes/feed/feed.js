@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import { composeURL } from '../../request/request';
+import composeURL from '../../../util/compose-url';
 
 const {
   merge
@@ -35,10 +35,15 @@ const defaults = opts => {
 
 export default class Feed {
 
-  constructor(opts) {
+  constructor(opts, context) {
     this.opts = defaults(opts);
+    this.context = context;
     this.delegate = null;
     this.started = false;
+  }
+
+  request() {
+    return this.context.request(...arguments);
   }
 
   get url() {

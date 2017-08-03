@@ -4,9 +4,13 @@ import Feed from 'couch/couch/changes/feed/unified/long-polling';
 configurations(({ module, test, createDatabase }) => {
 
   let db;
+  let ctx;
 
   function flush() {
     db = createDatabase();
+    ctx = {
+      request: opts => db.get('couch')._request(opts)
+    };
   }
 
   function protect(db) {
@@ -37,7 +41,7 @@ configurations(({ module, test, createDatabase }) => {
       qs: {
         include_docs: true
       }
-    });
+    }, ctx);
     let data = [];
     source.delegate = {
       onData(source_, json) {
@@ -78,7 +82,7 @@ configurations(({ module, test, createDatabase }) => {
         qs: {
           include_docs: true
         }
-      });
+      }, ctx);
       source.delegate = {
         onData(source_, json) {
           events.push({ type: 'data', json });

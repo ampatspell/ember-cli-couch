@@ -23,6 +23,10 @@ export default Ember.Object.extend(Evented, {
     assert({ error: 'internal', reason: 'override Changes._feedFactoryName' }, false);
   },
 
+  _feedContext() {
+    assert({ error: 'internal', reason: 'override Changes._feedContext' }, false);
+  },
+
   _lookupFeedClass(feed) {
     let name = this._feedFactoryName(feed);
     let factory = getOwner(this).factoryFor(name);
@@ -32,7 +36,8 @@ export default Ember.Object.extend(Evented, {
 
   _createFeed(Feed) {
     let opts = this._feedOptions();
-    let instance = new Feed(opts);
+    let context = this._feedContext();
+    let instance = new Feed(opts, context);
     return instance;
   },
 

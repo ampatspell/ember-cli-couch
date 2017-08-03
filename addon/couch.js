@@ -41,10 +41,16 @@ export default Ember.Object.extend(
 
   session: session(),
 
-  request(opts) {
+  resolveURL(path) {
     let url = this.get("normalizedUrl");
-    opts = opts || {};
-    opts.url = opts.url ? [url, opts.url].join('') : url;
+    if(path) {
+      return `${url}${path}`;
+    }
+    return url;
+  },
+
+  request(opts={}) {
+    opts.url = this.resolveURL(opts.url);
     return this._super(opts);
   },
 
@@ -87,7 +93,7 @@ export default Ember.Object.extend(
   }).readOnly(),
 
   _destroyRequest() {
-    this.get('_request').destroy();
+    this.get('__request').destroy();
   },
 
   _destroyOpenDatabases() {

@@ -1,10 +1,17 @@
 import Ember from 'ember';
+import isAbsoluteURL from '../../util/is-absolute-url';
 
 const {
   getOwner,
   computed,
   computed: { reads }
 } = Ember;
+
+const request = () => {
+  return computed(function() {
+    return getOwner(this).factoryFor('couch:request').create();
+  }).readOnly();
+};
 
 const fastboot = () => {
   return computed(function() {
@@ -17,14 +24,10 @@ const isFastBoot = () => {
 };
 
 const AuthSession = 'AuthSession';
-const HTTP = /^(http|https):\/\//;
 
 export default Ember.Mixin.create({
 
-  _request: computed(function() {
-    return getOwner(this).factoryFor('couch:request').create();
-  }).readOnly(),
-
+  __request: request(),
   _fastboot: fastboot(),
   _isFastBoot: isFastBoot(),
 
@@ -53,7 +56,7 @@ export default Ember.Mixin.create({
         opts.headers.cookie = cookie;
       }
       opts.url = opts.url || '';
-      if(!HTTP.test(opts.url)) {
+      if(!isAbsoluteURL(opts.url)) {
         let request = this.get('_fastboot.request');
         let { protocol, host } = request.getProperties('protocol', 'host');
         opts.url = `${protocol}//${host}${opts.url}`;
@@ -73,15 +76,19 @@ export default Ember.Mixin.create({
     return hash;
   },
 
-  request(opts) {
+  _request(opts) {
     opts = this._willSendRequest(opts);
-    return this.get('_request').send(opts).then(hash => {
+    return this.get('__request').send(opts).then(hash => {
       hash = this._didReceiveResponse(hash);
       if(hash.raw) {
         return hash.res;
       }
       return hash.json;
     });
+  },
+
+  request(opts) {
+    return this._request(opts);
   }
 
 });
