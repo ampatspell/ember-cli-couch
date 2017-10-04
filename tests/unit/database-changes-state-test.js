@@ -1,19 +1,18 @@
-import { configurations, cleanup } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations(module => {
 
   let db;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-state', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-state', {
+    async beforeEach() {
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('state changes', assert => {
+  test('state changes', function(assert) {
     let changes = db.changes();
 
     assert.deepEqual(changes.getProperties('isStarted', 'isSuspended'), {

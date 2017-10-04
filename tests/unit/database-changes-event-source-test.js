@@ -1,19 +1,19 @@
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
 
   let db;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-event-source', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-event-source', {
+    async beforeEach() {
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('listen for changes', assert => {
+  test('listen for changes', function(assert) {
     let data = [];
     let changes = db.changes();
     changes.on('data', doc => {

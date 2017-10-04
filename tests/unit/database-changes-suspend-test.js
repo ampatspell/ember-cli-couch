@@ -1,21 +1,23 @@
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
+  let feed;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-suspend', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-suspend', {
+    async beforeEach() {
+      feed = this.config.feed;
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('listen for changes suspend and resume', assert => {
+  test('listen for changes suspend and resume', function(assert) {
     let data = [];
-    let changes = db.changes({ feed: config.feed });
+    let changes = db.changes({ feed });
     changes.on('data', doc => {
       data.push(doc);
     });

@@ -1,20 +1,22 @@
-import { configurations, cleanup, wait, waitFor } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait, waitFor } from '../helpers/run';
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
+  let feed;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-restart', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-restart', {
+    async beforeEach() {
+      db = this.db;
+      feed = this.config.feed;
+      await this.recreate();
+    }
   });
 
-  test('can be restarted', assert => {
-    let changes = db.changes({ feed: config.feed });
+  test('can be restarted', function(assert) {
+    let changes = db.changes({ feed });
     let data = [];
     changes.on('data', doc => {
       data.push(doc);

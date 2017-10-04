@@ -1,34 +1,36 @@
 import Ember from 'ember';
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 import CouchChanges from 'couch/couch/changes';
 
 const {
   A
 } = Ember;
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
   let couch;
+  let feed;
 
-  function flush() {
-    db = createDatabase();
-    couch = db.get('couch');
-  }
-
-  module('couch-changes', () => {
-    flush();
-    return cleanup(db);
+  module('couch-changes', {
+    async beforeEach() {
+      couch = this.couch;
+      db = this.db;
+      feed = this.config.feed;
+      await this.recreate();
+    }
   });
 
-  test('create changes', assert => {
+  test('create changes', function(assert) {
     let changes = couch.changes();
     assert.ok(changes);
     assert.ok(CouchChanges.detectInstance(changes));
   });
 
-  test('drop, create database', assert => {
-    let changes = couch.changes({ feed: config.feed });
+  test('drop, create database', function(assert) {
+    let changes = couch.changes({ feed });
     let log = [];
     changes.on('data', json => {
       log.push(json);
@@ -39,7 +41,7 @@ configurations(({ module, test, createDatabase, config }) => {
     }).then(() => {
       return wait(null, 1000);
     }).then(() => {
-      if(config.key === '2.0') {
+      if(this.config.identifier === 'couchdb-2.1') {
         log = A(log).filter(row => row.db_name !== '_dbs');
         assert.deepEqual_(log, [
           {

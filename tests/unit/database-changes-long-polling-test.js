@@ -1,19 +1,19 @@
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 
-configurations(({ module, test, createDatabase }) => {
+configurations(module => {
 
   let db;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-long-polling', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-long-polling', {
+    async beforeEach() {
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('listen for changes', assert => {
+  test('listen for changes', function(assert) {
     let data = [];
     let changes = db.changes({ feed: 'long-polling' });
     changes.on('data', doc => {

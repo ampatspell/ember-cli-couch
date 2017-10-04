@@ -1,43 +1,44 @@
 import Ember from 'ember';
-import { configurations, cleanup, wait, admin, login, logout } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 
 const {
   A
 } = Ember;
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
 
   let db;
 
-  function protect(db) {
-    return login(db).then(() => {
+  function protect() {
+    return this.admin().then(() => {
       return db.get('security').save({
         admins: {
           names: [],
           roles: []
         },
         members: {
-          names: [ admin.name ],
+          names: [ this.config.admin.name ],
           roles: []
         }
       });
     }).then(() => {
-      return logout(db);
+      return this.logout();
     });
   }
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-forbidden', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-forbidden', {
+    async beforeEach() {
+      db = this.db;
+      this.protect = protect;
+      await this.recreate();
+    }
   });
 
-  test('attempt to listen for changes', assert => {
+  test('attempt to listen for changes', function(assert) {
     let data = A();
-    return protect(db).then(() => {
+    return this.protect().then(() => {
       let changes = db.changes({ reconnect: 100 });
       changes.on('data', doc => {
         data.push(doc);
@@ -54,7 +55,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
           "reason": "unknown"
         }
       );
-      return login(db).then(() => wait(null, 1000));
+      return this.admin().then(() => wait(null, 1000));
     }).then(() => {
       data.clear();
       return db.save({ _id: 'foof' }).then(() => wait(null, 1000));

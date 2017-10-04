@@ -1,20 +1,20 @@
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 import DatabaseChanges from 'couch/couch/database/changes';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
 
   let db;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-creation', () => {
-    flush();
-    return cleanup(db);
+  module('database-changes-creation', {
+    async beforeEach() {
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('is created with options', assert => {
+  test('is created with options', function(assert) {
     let changes = db.changes();
     assert.ok(changes);
     assert.ok(DatabaseChanges.detectInstance(changes));
@@ -27,7 +27,7 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('can be started', assert => {
+  test('can be started', function(assert) {
     let changes = db.changes();
     let data = [];
     changes.on('data', doc => {
@@ -56,13 +56,13 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('feed default reconnect delay', assert => {
+  test('feed default reconnect delay', function(assert) {
     let changes = db.changes();
     changes.start();
     assert.equal(changes.get('_feed').opts.reconnect, 3000);
   });
 
-  test('feed reconnect delay override', assert => {
+  test('feed reconnect delay override', function(assert) {
     let changes = db.changes({ reconnect: 1000 });
     changes.start();
     assert.equal(changes.get('_feed').opts.reconnect, 1000);

@@ -1,37 +1,38 @@
-import { configurations, cleanup, wait, login, logout, admin } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 import Feed from 'couch/couch/changes/feed/event-source';
 
-configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
+configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
 
   let db;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  function protect(db) {
-    return login(db).then(() => {
+  function protect() {
+    return this.admin().then(() => {
       return db.get('security').save({
         admins: {
           names: [],
           roles: []
         },
         members: {
-          names: [ admin.name ],
+          names: [ this.config.admin.name ],
           roles: []
         }
       });
     }).then(() => {
-      return logout(db);
+      return this.logout();
     });
   }
 
-  module('changes-source-event-source', () => {
-    flush();
-    return cleanup(db);
+  module('changes-source-event-source', {
+    async beforeEach() {
+      db = this.db;
+      this.protect = protect;
+      await this.recreate();
+    }
   });
 
-  test('listen save and delete', assert => {
+  test('listen save and delete', function(assert) {
     let source = new Feed({
       url: `${db.get('url')}/_changes`,
       qs: {
@@ -70,10 +71,10 @@ configurations({ only: '1.6' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('listen protected database', assert => {
+  test('listen protected database', function(assert) {
     let source;
     let events = [];
-    return protect(db).then(() => {
+    return this.protect().then(() => {
       source = new Feed({
         url: `${db.get('url')}/_changes`,
         qs: {
