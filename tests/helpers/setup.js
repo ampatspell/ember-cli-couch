@@ -3,6 +3,9 @@ import { module as qmodule, skip } from 'qunit';
 import { test as qtest, only as qonly } from 'ember-qunit';
 import startApp from './start-app';
 import extendAssert from './extend-assert';
+import environment from '../../config/environment';
+
+const host = environment.APP.COUCHDB_HOST;
 
 const {
   RSVP: { Promise, resolve, reject, all },
@@ -13,12 +16,12 @@ const {
 
 const configs = {
   '1.6': {
-    url: '/api/1.6',
+    url: `${host}:6016`,
     name: 'ember-cli-couch',
     feed: 'event-source'
   },
   '2.0': {
-    url: '/api/2.0',
+    url: `${host}:6020`,
     name: 'ember-cli-couch',
     feed: 'long-polling'
   }
