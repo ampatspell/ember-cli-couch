@@ -1,8 +1,6 @@
 /* eslint-env node */
-const assert = require('assert');
 
 const COUCHDB_HOST = process.env.COUCHDB_HOST;
-assert(COUCHDB_HOST, 'COUCHDB_HOST environment variable is required to run dummy and unittests');
 
 module.exports = function(environment) {
   var ENV = {
