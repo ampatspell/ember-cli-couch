@@ -25,7 +25,7 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
     }).then(json => {
       return db.delete('foo', json.rev);
     }).then(() => {
-      return wait();
+      return wait(null, 500);
     }).then(() => {
       assert.deepEqual_(data.map(row => row.doc), [
         {
