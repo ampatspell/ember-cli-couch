@@ -42,6 +42,9 @@ export default Changes.extend({
   },
 
   _resume() {
+    if(this.isDestroying) {
+      return;
+    }
     this.decrementProperty('_suspended');
     if(this.get('_suspended') === 0) {
       this._enqueueFlush();
