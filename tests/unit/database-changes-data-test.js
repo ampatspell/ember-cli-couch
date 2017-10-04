@@ -15,7 +15,7 @@ configurations(module => {
     }
   });
 
-  test(`event source and longpoll has the same data (${feed})`, function(assert) {
+  test('event source and longpoll has the same data', function(assert) {
     let data = [];
     let changes = db.changes({ feed });
     changes.on('data', doc => {
