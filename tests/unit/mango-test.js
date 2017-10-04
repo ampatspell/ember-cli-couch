@@ -1,17 +1,20 @@
-import { configurations, cleanup } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
-configurations({ only: '2.0' }, ({ module, test, createDatabase }) => {
+configurations({ identifiers: [ 'couchdb-2.1' ] }, module => {
 
   let db;
   let mango;
 
-  module('mango', () => {
-    db = createDatabase();
-    mango = db.get('mango');
-    return cleanup(db);
+  module('mango', {
+    async beforeEach() {
+      db = this.db;
+      mango = db.get('mango');
+      await this.recreate();
+    }
   });
 
-  test('create index', assert => {
+  test('create index', function(assert) {
     return mango.save('foof', 'one', { fields: [ 'a', 'b' ] }).then(res => {
       assert.deepEqual(res, {
         "id": "_design/foof",
@@ -44,7 +47,7 @@ configurations({ only: '2.0' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('load indexes', assert => {
+  test('load indexes', function(assert) {
     return mango.save('foof', 'type', { fields: [ 'type' ] }).then(() => {
       return mango.all();
     }).then(doc => {
@@ -80,7 +83,7 @@ configurations({ only: '2.0' }, ({ module, test, createDatabase }) => {
     });
   });
 
-  test('delete index', assert => {
+  test('delete index', function(assert) {
     return mango.save('foof', 'type', { fields: [ 'type' ] }).then(() => {
       return mango.save('foof', 'name', { fields: [ 'name' ] });
     }).then(() => {
