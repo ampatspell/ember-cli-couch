@@ -1,21 +1,26 @@
 /* global emit */
 import Ember from 'ember';
-import { configurations, cleanup, admin } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
 const {
   RSVP: { all }
 } = Ember;
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
+  let admin;
 
-  module('documents', () => {
-    db = createDatabase();
-    return cleanup(db);
+  module('documents', {
+    async beforeEach() {
+      db = this.db;
+      admin = this.config.admin;
+      await this.recreate();
+    }
   });
 
-  test('save doc without id', assert => {
+  test('save doc without id', function(assert) {
     return db.save({ name: 'first' }).then(data => {
       assert.equal(data.id.length, 32);
       assert.deepEqual_({
@@ -34,7 +39,7 @@ configurations(({ module, test, createDatabase, config }) => {
     });
   });
 
-  test('save and update document', assert => {
+  test('save and update document', function(assert) {
     let doc = { _id: 'hello', name: 'first' };
     return db.save(doc).then(data => {
       doc._rev = data.rev;
@@ -52,7 +57,7 @@ configurations(({ module, test, createDatabase, config }) => {
     });
   });
 
-  test('load document with missing rev', assert => {
+  test('load document with missing rev', function(assert) {
     return db.load('hello', { rev: '2-foobar' }).then(() => {
       assert.ok(false, 'should reject');
     }, err => {
@@ -64,7 +69,7 @@ configurations(({ module, test, createDatabase, config }) => {
     });
   });
 
-  test('delete document succeeds', assert => {
+  test('delete document succeeds', function(assert) {
     return db.save({ _id: 'hello' }).then(data => {
       return db.delete('hello', data.rev);
     }).then(data => {
@@ -76,7 +81,7 @@ configurations(({ module, test, createDatabase, config }) => {
     });
   });
 
-  test('all', assert => {
+  test('all', function(assert) {
     return db.save({_id: 'hello'}).then(() => {
       return db.all({ include_docs: true });
     }).then(data => {
@@ -111,7 +116,7 @@ configurations(({ module, test, createDatabase, config }) => {
     }
   };
 
-  test('view with key', assert => {
+  test('view with key', function(assert) {
     return db.get('couch.session').save(admin.name, admin.password).then(() => {
       return all([
         db.save(ddoc),
@@ -134,8 +139,8 @@ configurations(({ module, test, createDatabase, config }) => {
     });
   });
 
-  test('url', assert => {
-    assert.equal(db.get('url'), `${config.url}/${config.name}`);
+  test('url', function(assert) {
+    assert.equal(db.get('url'), `${this.config.couch.url}/${this.config.name}`);
   });
 
 });

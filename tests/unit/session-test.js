@@ -12,7 +12,7 @@ configurations(module => {
     }
   });
 
-  test('session exists', assert => {
+  test('session exists', function(assert) {
     assert.ok(session);
   });
 
