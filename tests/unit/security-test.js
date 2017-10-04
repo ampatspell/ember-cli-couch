@@ -1,14 +1,17 @@
-import { configurations, cleanup, logout, login } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
-configurations(({ module, test, createDatabase }) => {
+configurations(module => {
 
   let security;
   let db;
 
-  module('security', () => {
-    db = createDatabase();
-    security = db.get('security');
-    return cleanup(db);
+  module('security', {
+    async beforeEach() {
+      db = this.db;
+      security = db.get('security');
+      await this.recreate();
+    }
   });
 
   const blank = {
@@ -22,11 +25,11 @@ configurations(({ module, test, createDatabase }) => {
     }
   };
 
-  test('exists', assert => {
+  test('exists', function(assert) {
     assert.ok(security);
   });
 
-  test('load succeeds', (assert) => {
+  test('load succeeds', function(assert) {
     return security.save(blank).then(() => {
       return security.load();
     }).then(data => {
@@ -34,8 +37,8 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save fails', (assert) => {
-    return logout(db).then(() => {
+  test('save fails', function(assert) {
+    return this.logout().then(() => {
       return security.save({});
     }).then(() => {
       assert.ok(false, 'should reject');
@@ -57,8 +60,8 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save succeeds', (assert) => {
-    return login(db).then(() => {
+  test('save succeeds', function(assert) {
+    return this.admin().then(() => {
       return security.save({
         admins: {
           names: [ 'larry' ]
@@ -79,8 +82,8 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save with undefined', (assert) => {
-    return login(db).then(() => {
+  test('save with undefined', function(assert) {
+    return this.admin().then(() => {
       return security.save();
     }).then(() => {
       assert.ok(false, 'should reject');
