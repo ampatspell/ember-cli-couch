@@ -36,8 +36,10 @@ const admin = {
 }
 
 for(let key in configs) {
-  configs[key].identifier = key;
-  configs[key].admin = admin;
+  let config = configs[key];
+  config.identifier = key;
+  config.admin = admin;
+  config.name = 'ember-cli-couch';
 }
 
 const defaultConfig = configs['couchdb-1.6'];
@@ -70,7 +72,7 @@ export default identifier => {
         this.instance = this.application.buildInstance();
         getter(this, 'couches', () => this.instance.lookup('couch:couches'));
         getter(this, 'couch', () => this.couches.couch(config.couch));
-        getter(this, 'db', () => this.couch.database('ember-cli-couch'));
+        getter(this, 'db', () => this.couch.database(config.name));
         getter(this,  'config', () => config);
         let beforeEach = options.beforeEach && options.beforeEach.apply(this, arguments);
         return resolve(beforeEach);
