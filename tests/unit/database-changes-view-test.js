@@ -1,23 +1,24 @@
 import Ember from 'ember';
-import { configurations, cleanup, wait } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
+import { wait } from '../helpers/run';
 
 const {
   RSVP: { all }
 } = Ember;
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
+  let feed;
 
-  function flush() {
-    db = createDatabase();
-  }
-
-  module('database-changes-view', () => {
-    flush();
-    /* global emit */
-    return cleanup(db).then(() => {
-      return db.get('design').save('changes', {
+  module('database-changes-view', {
+    async beforeEach() {
+      db = this.db;
+      feed = this.config.feed;
+      await this.recreate();
+      /* global emit */
+      await db.get('design').save('changes', {
         views: {
           'only-things': {
             map(doc) {
@@ -29,11 +30,11 @@ configurations(({ module, test, createDatabase, config }) => {
           }
         }
       });
-    });
+    }
   });
 
-  test('listen for changes', assert => {
-    let changes = db.changes({ feed: config.feed, view: 'changes/only-things' });
+  test('listen for changes', function(assert) {
+    let changes = db.changes({ feed, view: 'changes/only-things' });
     let data = [];
     changes.on('data', doc => {
       data.push(doc);
@@ -62,6 +63,9 @@ configurations(({ module, test, createDatabase, config }) => {
           "type": "thing"
         }
       ]);
+
+      changes.stop();
+      return db.save({ _id: 'thing' });
     });
   });
 

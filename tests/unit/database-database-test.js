@@ -1,33 +1,36 @@
 import Ember from 'ember';
-import { configurations, cleanup, login, logout } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 import { later } from 'couch/util/run';
 
 const {
   RSVP: { resolve }
 } = Ember;
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let db;
 
-  module('database-database', () => {
-    db = createDatabase();
-    return cleanup(db);
+  module('database-database', {
+    async beforeEach() {
+      db = this.db;
+      await this.recreate();
+    }
   });
 
-  test('exists', assert => {
+  test('exists', function(assert) {
     assert.ok(db);
   });
 
   test('get database info', function(assert) {
     return db.info().then(resp => {
       assert.ok(resp);
-      assert.equal(resp.db_name, config.name);
+      assert.equal(resp.db_name, this.config.name);
     });
   });
 
   test('delete and create database', function(assert) {
-    return login(db).then(() => {
+    return this.admin().then(() => {
       return db.get('database').create({ optional: true });
     }).then(data => {
       assert.deepEqual({
@@ -42,12 +45,12 @@ configurations(({ module, test, createDatabase, config }) => {
       assert.deepEqual({ ok: true }, data);
       return db.info();
     }).then(data => {
-      assert.equal(data.db_name, config.name);
+      assert.equal(data.db_name, this.config.name);
     });
   });
 
   test('create non-optional database', function(assert) {
-    return logout(db).then(() => {
+    return this.logout().then(() => {
       return db.get('database').create();
     }).then(() => {
       assert.ok(false, 'should reject');
@@ -61,7 +64,7 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   test('delete non-optional database', function(assert) {
-    return logout(db).then(() => {
+    return this.logout().then(() => {
       return db.get('database').delete();
     }).then(() => {
       assert.ok(false, 'should reject');

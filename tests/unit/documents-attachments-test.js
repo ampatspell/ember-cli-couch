@@ -1,16 +1,19 @@
-import { configurations, cleanup } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 import createBlob from 'couch/util/create-blob';
 
-configurations(({ module, test, createDatabase }) => {
+configurations(module => {
 
   let db;
 
-  module('documents-attachments', () => {
-    db = createDatabase();
-    return cleanup(db);
+  module('documents-attachments', {
+    async beforeEach() {
+      db = this.db;
+      return this.recreate();
+    }
   });
 
-  test('save doc with attachment', assert => {
+  test('save doc with attachment', function(assert) {
     return db.save({
       _id: 'thing',
       _attachments: {
@@ -45,7 +48,7 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save doc with stubs', assert => {
+  test('save doc with stubs', function(assert) {
     return db.save({
       _id: 'thing',
       _attachments: {
@@ -67,7 +70,7 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save doc without id', assert => {
+  test('save doc without id', function(assert) {
     return db.save({
       _attachments: {
         original: {
@@ -80,7 +83,7 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save doc with file attachment', assert => {
+  test('save doc with file attachment', function(assert) {
     let blob = createBlob('<h1>hey</h1>', 'text/html');
     return db.save({
       _id: 'hello',
@@ -108,7 +111,7 @@ configurations(({ module, test, createDatabase }) => {
     });
   });
 
-  test('save text with special chars', assert => {
+  test('save text with special chars', function(assert) {
     return db.save({
       _id: 'hello',
       _attachments: {
