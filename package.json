@@ -51,7 +51,8 @@
     "ember-load-initializers": "1.0.0",
     "ember-resolver": "4.3.0",
     "ember-source": "2.14.1",
-    "loader.js": "4.6.0"
+    "loader.js": "4.6.0",
+    "serve-static": "^1.13.1"
   },
   "engines": {
     "node": ">= 4"
