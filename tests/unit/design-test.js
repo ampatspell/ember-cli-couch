@@ -1,12 +1,13 @@
 /* global emit */
 import Ember from 'ember';
-import { configurations, cleanup } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
 const {
   copy
 } = Ember;
 
-configurations(({ module, test, createDatabase }) => {
+configurations(module => {
 
   let db;
   let design;
@@ -23,10 +24,12 @@ configurations(({ module, test, createDatabase }) => {
     }
   };
 
-  module('design', () => {
-    db = createDatabase();
-    design = db.get('design');
-    return cleanup(db);
+  module('design', {
+    async beforeEach() {
+      db = this.db;
+      design = db.get('design');
+      await this.recreate();
+    }
   });
 
   test('exists', assert => {

@@ -49,6 +49,8 @@
     "ember-export-application-global": "2.0.0",
     "ember-fetch": "3.2.9",
     "ember-load-initializers": "1.0.0",
+    "ember-maybe-import-regenerator": "^0.1.6",
+    "ember-native-dom-helpers": "^0.5.4",
     "ember-resolver": "4.3.0",
     "ember-source": "2.14.1",
     "loader.js": "4.6.0",

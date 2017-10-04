@@ -1,13 +1,15 @@
-import { configurations, admin, logout } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
   let session;
 
-  module('session', () => {
-    let db = createDatabase();
-    session = db.get('couch.session');
-    return logout(db);
+  module('session', {
+    async beforeEach() {
+      session = this.db.get('couch.session');
+      return this.logout();
+    }
   });
 
   test('session exists', assert => {
@@ -23,19 +25,19 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   test('save succeeds', function(assert) {
-    return session.save(admin.name, admin.password).then(data => {
+    return session.save(this.config.admin.name, this.config.admin.password).then(data => {
       assert.equal(data.ok, true);
       // 1.6 vs 2.0
-      if(config.key === '1.6') {
+      if(this.config.identifier === 'couchdb-1.6') {
         assert.equal(data.name, null);
-      } else if(config.key === '2.0') {
-        assert.equal(data.name, admin.name);
+      } else if(this.config.identifier === 'couchdb-2.1') {
+        assert.equal(data.name, this.config.admin.name);
       } else {
         assert.ok(false, 'version');
       }
       return session.load();
     }).then(data => {
-      assert.equal(data.userCtx.name, admin.name);
+      assert.equal(data.userCtx.name, this.config.admin.name);
     });
   });
 
@@ -52,7 +54,7 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   test('delete succeeds', function(assert) {
-    return session.save(admin.name, admin.password).then(() => {
+    return session.save(this.config.admin.name, this.config.admin.password).then(() => {
       return session.delete();
     }).then(data => {
       assert.deepEqual({ ok: true }, data);
@@ -65,7 +67,7 @@ configurations(({ module, test, createDatabase, config }) => {
   });
 
   function testTrigger(name, fn) {
-    test(name, (assert) => {
+    test(name, function(assert) {
       let docs = session;
 
       let log = [];
@@ -78,25 +80,25 @@ configurations(({ module, test, createDatabase, config }) => {
         log.push('logout');
       });
 
-      return fn(assert, docs, log);
+      return fn.call(this, assert, docs, log);
     });
   }
 
-  testTrigger('login triggers', (assert, docs, log) => {
-    return docs.save(admin.name, admin.password).then(() => {
+  testTrigger('login triggers', function(assert, docs, log) {
+    return docs.save(this.config.admin.name, this.config.admin.password).then(() => {
       assert.deepEqual(log, ['login']);
     });
   });
 
-  testTrigger('login fails triggers logout', (assert, docs, log) => {
-    return docs.save(admin.name, 'bogus').then(() => {
+  testTrigger('login fails triggers logout', function(assert, docs, log) {
+    return docs.save(this.config.admin.name, 'bogus').then(() => {
       assert.ok(false, 'should reject');
     }, () => {
       assert.deepEqual(log, ['logout']);
     });
   });
 
-  testTrigger('logout triggers', (assert, docs, log) => {
+  testTrigger('logout triggers', function(assert, docs, log) {
     return docs.delete().then(() => {
       assert.deepEqual(log, ['logout']);
     });

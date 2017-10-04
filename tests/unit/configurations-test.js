@@ -1,18 +1,18 @@
-import { configurations } from '../helpers/setup';
+import configurations from '../helpers/configurations';
+import { test } from '../helpers/qunit';
 
-configurations(({ module, test, createDatabase, config }) => {
+configurations(module => {
 
-  let db;
-
-  module('configuration', () => {
-    db = createDatabase();
+  module('configuration', {
+    async beforeEach() {
+      await this.recreate();
+    }
   });
 
-  test('info', assert => {
-    return db.get('couch').info().then(json => {
-      assert.equal('Welcome', json.couchdb);
-      assert.ok(json.version.indexOf(config.key) === 0);
-    });
+  test('info', async function(assert) {
+    let json = await this.db.get('couch').info();
+    assert.equal(json.couchdb, 'Welcome');
+    assert.equal(json.version, this.config.version);
   });
 
 });
