@@ -33,7 +33,8 @@
     "broccoli-stew": "1.5.0",
     "broccoli-templater": "1.0.0",
     "ember-cli-babel": "6.8.2",
-    "blob-util": "1.3.0"
+    "blob-util": "1.3.0",
+    "ember-fetch": "3.4.0"
   },
   "devDependencies": {
     "broccoli-asset-rev": "2.6.0",
@@ -50,7 +51,6 @@
     "ember-cli-uglify": "2.0.0",
     "ember-disable-prototype-extensions": "1.1.3",
     "ember-export-application-global": "2.0.0",
-    "ember-fetch": "3.4.0",
     "ember-load-initializers": "1.0.0",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-helpers": "^0.5.4",
