@@ -55,7 +55,7 @@
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-native-dom-helpers": "^0.5.4",
     "ember-resolver": "4.5.0",
-    "ember-source": "2.15.1",
+    "ember-source": "2.15.2",
     "loader.js": "4.6.0",
     "serve-static": "^1.13.1"
   },
