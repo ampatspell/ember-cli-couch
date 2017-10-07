@@ -4,7 +4,9 @@ import startApp from '../helpers/start-app';
 import destroyApp from '../helpers/destroy-app';
 import environment from '../../config/environment';
 
-const host = environment.APP.COUCHDB_HOST;
+const {
+  COUCHDB_HOST
+} = environment;
 
 const {
   RSVP: { resolve },
@@ -17,14 +19,14 @@ const configs = {
   'couchdb-1.6': {
     version: '1.6.1',
     couch: {
-      url: `${host}:6016`
+      url: `${COUCHDB_HOST}:6016`
     },
     feed: 'event-source'
   },
   'couchdb-2.1': {
     version: '2.0.0',
     couch: {
-      url: `${host}:6020`
+      url: `${COUCHDB_HOST}:6020`
     },
     feed: 'long-polling'
   }

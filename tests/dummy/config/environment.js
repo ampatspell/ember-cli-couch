@@ -1,7 +1,5 @@
 /* eslint-env node */
 
-const COUCHDB_HOST = process.env.COUCHDB_HOST;
-
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
@@ -16,7 +14,6 @@ module.exports = function(environment) {
       }
     },
     APP: {
-      COUCHDB_HOST
     }
   };
 

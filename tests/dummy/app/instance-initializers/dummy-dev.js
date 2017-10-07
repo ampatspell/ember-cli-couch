@@ -2,7 +2,9 @@ import Ember from 'ember';
 import { registerDatabaseServices } from 'couch';
 import environment from '../config/environment';
 
-const host = environment.APP.COUCHDB_HOST;
+const {
+  COUCHDB_HOST
+} = environment;
 
 const {
   Logger: { info }
@@ -13,7 +15,7 @@ export default {
   initialize(app) {
     registerDatabaseServices(app, {
       db: {
-        url: `${host}:6016`,
+        url: `${COUCHDB_HOST}:6016`,
         name: 'thing'
       }
     });
