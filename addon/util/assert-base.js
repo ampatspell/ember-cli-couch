@@ -58,6 +58,14 @@ export default function(Error) {
     isFunction_(`${key} must be function`, value);
   }
 
+  function isArray_(message, value) {
+    assert(message, typeOf(value) === 'array');
+  }
+
+  function isArray(key, value) {
+    isArray_(`${key} must be array`, value);
+  }
+
   function isOneOf(key, value, values) {
     assert(`${key} must be one of [${values.join(', ')}]`, values.indexOf(value) !== -1);
   }
@@ -74,6 +82,8 @@ export default function(Error) {
     isClass,
     isFunction_,
     isFunction,
+    isArray_,
+    isArray,
     isOneOf
   };
 }

@@ -13,6 +13,8 @@ let {
   isClass,
   isFunction_,
   isFunction,
+  isArray_,
+  isArray,
   isOneOf
 } = Base(CouchError);
 
@@ -28,6 +30,8 @@ export {
   isClass,
   isFunction_,
   isFunction,
+  isArray_,
+  isArray,
   isOneOf
 }
 
