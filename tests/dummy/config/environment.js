@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+require('dotenv').config();
+
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'dummy',
@@ -14,7 +16,8 @@ module.exports = function(environment) {
       }
     },
     APP: {
-    }
+    },
+    COUCHDB_HOST: process.env.COUCHDB_HOST
   };
 
   if (environment === 'development') {
