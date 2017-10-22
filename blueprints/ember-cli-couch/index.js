@@ -2,6 +2,6 @@ module.exports = {
   normalizeEntityName: function() {
   },
   afterInstall: function() {
-    return this.addAddonToProject('ember-fetch', '3.4.1');
+    return this.addAddonToProject('ember-fetch', '3.4.3');
   }
 };
