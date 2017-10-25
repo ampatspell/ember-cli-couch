@@ -3,7 +3,7 @@ import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 import Feed from 'couch/couch/changes/feed/event-source';
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations({ identifiers: [ 'couchdb-1.6-event-source' ] }, module => {
 
   let db;
 

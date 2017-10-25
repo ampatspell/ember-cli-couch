@@ -15,20 +15,20 @@ const {
 
 const getter = (object, name, fn) => Object.defineProperty(object, name, { get: () => fn() });
 
-const configs = {
+const base = {
   'couchdb-1.6': {
     version: '1.6.1',
     couch: {
       url: `${COUCHDB_HOST}:6016`
     },
-    feed: 'event-source'
+    feeds: [ 'event-source', 'long-polling', 'continuous' ]
   },
   'couchdb-2.1': {
     version: '2.0.0',
     couch: {
       url: `${COUCHDB_HOST}:6020`
     },
-    feed: 'long-polling'
+    feeds: [ 'long-polling', 'continuous' ]
   }
 };
 
@@ -37,14 +37,19 @@ const admin = {
   password: 'hello'
 }
 
-for(let key in configs) {
-  let config = configs[key];
-  config.identifier = key;
-  config.admin = admin;
-  config.name = 'ember-cli-couch';
+const configs = {};
+
+for(let key in base) {
+  let { version, couch, feeds } = base[key];
+  let name = 'ember-cli-couch';
+  feeds.forEach(feed => {
+    let additional = feeds[0] !== feed;
+    let identifier = key;
+    configs[`${key}-${feed}`] = { identifier, version, couch, feed, additional, admin, name };
+  });
 }
 
-const defaultConfig = configs['couchdb-1.6'];
+const defaultConfig = configs['couchdb-1.6-continuous'];
 
 export const availableIdentifiers = Object.keys(configs);
 

@@ -10,7 +10,7 @@ const {
   A
 } = Ember;
 
-export const defaultFeedIdentifiers = [ 'event-source', 'long-polling' ];
+export const defaultFeedIdentifiers = [ 'continuous', 'event-source', 'long-polling' ];
 
 const inBrowser = fn => {
   return function(...args) {

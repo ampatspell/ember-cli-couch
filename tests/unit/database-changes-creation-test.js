@@ -3,7 +3,7 @@ import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 import DatabaseChanges from 'couch/couch/database/changes';
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations(module => {
 
   let db;
 
@@ -21,6 +21,7 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
     assert.deepEqual(changes.get('opts'), {
       "include_docs": true,
       "feed": [
+        "continuous",
         "event-source",
         "long-polling"
       ]

@@ -30,6 +30,9 @@ const defaults = opts => {
   if(!opts.reconnect) {
     opts.reconnect = 3000;
   }
+  if(!opts.heartbeat) {
+    opts.heartbeat = 15000;
+  }
   return opts;
 }
 

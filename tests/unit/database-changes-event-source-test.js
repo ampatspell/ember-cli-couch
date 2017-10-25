@@ -2,7 +2,7 @@ import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations({ identifiers: [ 'couchdb-1.6-event-source' ] }, module => {
 
   let db;
 

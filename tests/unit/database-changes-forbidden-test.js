@@ -7,7 +7,7 @@ const {
   A
 } = Ember;
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations(module => {
 
   let db;
 

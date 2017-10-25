@@ -30,6 +30,7 @@ export default {
     container.register('couch:database-changes', DatabaseChanges);
     container.register('couch:database-changes/feed/event-source', ChangesFeedEventSource);
     container.register('couch:database-changes/feed/long-polling', ChangesFeedLongPolling);
+    container.register('couch:database-changes/feed/continuous', ChangesFeedContinuous);
     container.register('couch:couch-changes', CouchChanges);
     container.register('couch:couch-changes/feed/event-source', ChangesFeedEventSource);
     container.register('couch:couch-changes/feed/long-polling', ChangesFeedLongPolling);
