@@ -97,8 +97,9 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
         {
           type: 'error',
           err: {
-            error: 'event source',
-            reason: 'unknown'
+            "error": "unauthorized",
+            "reason": "You are not authorized to access this db.",
+            "status": 401
           }
         }
       ]);

@@ -3,6 +3,7 @@ import Feed from './feed';
 import Error from '../../../util/error';
 
 const {
+  merge,
   run: { later, cancel }
 } = Ember;
 
@@ -69,13 +70,35 @@ export default class ContinuousFeed extends Feed {
   onHeadersReceived() {
   }
 
-  onLoading() {
-    let xhr = this.xhr;
-    let text = xhr.responseText;
+  get json() {
+    let text = this.xhr.responseText;
     let value = text.substr(this.len);
-    let json = JSON.parse(value);
     this.len = text.length;
-    this.onData(json);
+    return JSON.parse(value);
+  }
+
+  get jsonError() {
+    try {
+      let status = this.xhr.status;
+      return new Error(merge({ status }, this.json));
+    } catch(nested) {
+      return new Error({ error: 'continuous', reason: 'unknown', nested });
+    }
+  }
+
+  onError() {
+    let err = this.jsonError;
+    super.onError(err);
+    this.enqueueRestart();
+  }
+
+  onLoading() {
+    let status = this.xhr.status;
+    if(status === 200) {
+      this.onData(this.json);
+    } else {
+      this.onError();
+    }
   }
 
   onDone() {
@@ -98,13 +121,5 @@ export default class ContinuousFeed extends Feed {
       this.onDone();
     }
   }
-
-  // onError(e) {
-  //   let readyState = e.target.readyState;
-  //   super.onError(new Error({ error: 'event source', reason: 'unknown', readyState }));
-  //   if(readyState !== e.target.OPEN) {
-  //     this.enqueueRestart();
-  //   }
-  // }
 
 }
