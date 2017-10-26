@@ -7,7 +7,7 @@ const {
   RSVP: { all }
 } = Ember;
 
-configurations(module => {
+configurations({ defaults: true }, module => {
 
   let db;
   let admin;

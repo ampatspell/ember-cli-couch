@@ -20,7 +20,7 @@ configurations({ identifiers: [ 'couchdb-1.6-event-source' ] }, module => {
       data.push(doc);
     });
     changes.start();
-    return wait().then(() => {
+    return wait(null, 500).then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);

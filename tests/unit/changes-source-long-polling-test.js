@@ -1,9 +1,9 @@
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
-import Feed from 'couch/couch/changes/feed/unified/long-polling';
+import Feed from 'couch/couch/changes/feed/unified/long-polling-array';
 
-configurations(module => {
+configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-polling' ] }, module => {
 
   let db;
   let ctx;

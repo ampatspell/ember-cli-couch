@@ -7,7 +7,7 @@ const {
   RSVP: { resolve }
 } = Ember;
 
-configurations(module => {
+configurations({ defaults: true }, module => {
 
   let db;
 

@@ -7,7 +7,7 @@ const {
   copy
 } = Ember;
 
-configurations(module => {
+configurations({ defaults: true }, module => {
 
   let db;
   let design;

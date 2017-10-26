@@ -3,7 +3,7 @@ import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 import Feed from 'couch/couch/changes/feed/continuous';
 
-configurations({ identifiers: [ 'couchdb-1.6-continuous' ] }, module => {
+configurations({ identifiers: [ 'couchdb-1.6-continuous', 'couchdb-2.1-continuous' ] }, module => {
 
   let db;
 
@@ -48,7 +48,7 @@ configurations({ identifiers: [ 'couchdb-1.6-continuous' ] }, module => {
       }
     };
     source.start();
-    return wait().then(() => {
+    return wait(null, 100).then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);
