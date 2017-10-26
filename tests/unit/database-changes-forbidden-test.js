@@ -7,7 +7,7 @@ const {
   A
 } = Ember;
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations(module => {
 
   let db;
 
@@ -39,7 +39,7 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
   test('attempt to listen for changes', function(assert) {
     let data = A();
     return this.protect().then(() => {
-      let changes = db.changes({ reconnect: 100 });
+      let changes = db.changes({ feed: this.config.feed, reconnect: 100, heartbeat: 10 });
       changes.on('data', doc => {
         data.push(doc);
       });
@@ -49,12 +49,32 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
       changes.start();
       return wait(null, 1000);
     }).then(() => {
-      assert.deepEqual(data[0],
-        {
-          "error": "event source",
-          "reason": "unknown"
-        }
-      );
+      if(this.config.feed === 'continuous') {
+        assert.deepEqual(data[0],
+          {
+            "error": "unauthorized",
+            "reason": "You are not authorized to access this db.",
+            "status": 401
+          }
+        );
+      } else if(this.config.feed === 'event-source') {
+        assert.deepEqual(data[0],
+          {
+            "error": "event source",
+            "reason": "unknown"
+          }
+        );
+      } else if(this.config.feed === 'long-polling') {
+        assert.deepEqual(data[0],
+          {
+            "error": "unauthorized",
+            "reason": "You are not authorized to access this db.",
+            "status": 401
+          }
+        );
+      } else {
+        assert.ok(false, 'feed');
+      }
       return this.admin().then(() => wait(null, 1000));
     }).then(() => {
       data.clear();

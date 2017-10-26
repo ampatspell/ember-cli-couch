@@ -1,7 +1,7 @@
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 
-configurations(module => {
+configurations({ defaults: true }, module => {
 
   let session;
 

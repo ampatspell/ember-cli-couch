@@ -2,7 +2,7 @@ import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 
-configurations(module => {
+configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-polling' ] }, module => {
 
   let db;
 

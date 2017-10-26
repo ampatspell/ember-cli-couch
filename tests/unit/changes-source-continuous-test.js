@@ -1,16 +1,15 @@
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
-import Feed from 'couch/couch/changes/feed/unified/long-polling-array';
+import Feed from 'couch/couch/changes/feed/continuous';
 
-configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-polling' ] }, module => {
+configurations({ identifiers: [ 'couchdb-1.6-continuous', 'couchdb-2.1-continuous' ] }, module => {
 
   let db;
-  let ctx;
 
   function protect() {
     return this.admin().then(() => {
-      return this.db.get('security').save({
+      return db.get('security').save({
         admins: {
           names: [],
           roles: []
@@ -25,13 +24,10 @@ configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-po
     });
   }
 
-  module('changes-source-long-polling', {
+  module('changes-source-continuous', {
     async beforeEach() {
       db = this.db;
       this.protect = protect;
-      ctx = {
-        request: opts => db.get('couch')._request(opts)
-      };
       await this.recreate();
     }
   });
@@ -40,9 +36,10 @@ configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-po
     let source = new Feed({
       url: `${db.get('url')}/_changes`,
       qs: {
-        include_docs: true
+        include_docs: true,
+        since: 'now'
       }
-    }, ctx);
+    });
     let data = [];
     source.delegate = {
       onData(source_, json) {
@@ -51,7 +48,7 @@ configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-po
       }
     };
     source.start();
-    return wait(null, 1000).then(() => {
+    return wait(null, 100).then(() => {
       return db.save({ _id: 'foo', type: 'thing' });
     }).then(json => {
       return db.delete('foo', json.rev);
@@ -81,19 +78,20 @@ configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-po
       source = new Feed({
         url: `${db.get('url')}/_changes`,
         qs: {
-          include_docs: true
+          include_docs: true,
+          since: 'now'
         }
-      }, ctx);
+      });
       source.delegate = {
         onData(source_, json) {
           events.push({ type: 'data', json });
         },
-        onError(listener_, err) {
+        onError(source_, err) {
           events.push({ type: 'error', err: err.toJSON() });
         }
       };
       source.start();
-      return wait(null, 100);
+      return wait(null, 1000);
     }).then(() => {
       assert.deepEqual(events, [
         {
@@ -102,7 +100,7 @@ configurations({ identifiers: [ 'couchdb-1.6-long-polling', 'couchdb-2.1-long-po
             "error": "unauthorized",
             "reason": "You are not authorized to access this db.",
             "status": 401
-          },
+          }
         }
       ]);
     }).finally(() => {

@@ -24,22 +24,26 @@ configurations(module => {
   });
 
   test('create changes', function(assert) {
-    let changes = couch.changes();
+    let changes = couch.changes({ feed });
     assert.ok(changes);
     assert.ok(CouchChanges.detectInstance(changes));
   });
 
   test('drop, create database', function(assert) {
-    let changes = couch.changes({ feed });
+    let changes = couch.changes({ feed, timeout: 2000 });
     let log = [];
     changes.on('data', json => {
       log.push(json);
     });
     changes.start();
-    return wait(null, 300).then(() => {
-      return db.get('database').recreate({ type: 'database' });
+    return wait(null, 500).then(() => {
+      return db.get('database').delete();
     }).then(() => {
-      return wait(null, 1000);
+      return wait(null, 500);
+    }).then(() => {
+      return db.get('database').create();
+    }).then(() => {
+      return wait(null, 500);
     }).then(() => {
       if(this.config.identifier === 'couchdb-2.1') {
         log = A(log).filter(row => row.db_name !== '_dbs');
@@ -55,7 +59,10 @@ configurations(module => {
             "type": "created"
           }
         ]);
-      } else {
+      } else if(this.config.identifier === 'couchdb-1.6') {
+        if(this.config.feed === 'long-polling') {
+          log.forEach(entry => delete entry.ok);
+        }
         assert.deepEqual_(log, [
           {
             "db_name": "ember-cli-couch",
@@ -67,7 +74,7 @@ configurations(module => {
           }
         ]);
       }
-    })
+    });
   });
 
 });

@@ -13,22 +13,20 @@ const {
   assert
 } = Ember;
 
-const getter = (object, name, fn) => Object.defineProperty(object, name, { get: () => fn() });
-
-const configs = {
+const base = {
   'couchdb-1.6': {
     version: '1.6.1',
     couch: {
       url: `${COUCHDB_HOST}:6016`
     },
-    feed: 'event-source'
+    feeds: [ 'event-source', 'long-polling', 'continuous' ]
   },
   'couchdb-2.1': {
     version: '2.0.0',
     couch: {
       url: `${COUCHDB_HOST}:6020`
     },
-    feed: 'long-polling'
+    feeds: [ 'long-polling', 'continuous' ]
   }
 };
 
@@ -37,19 +35,33 @@ const admin = {
   password: 'hello'
 }
 
-for(let key in configs) {
-  let config = configs[key];
-  config.identifier = key;
-  config.admin = admin;
-  config.name = 'ember-cli-couch';
+const configs = {};
+export const defaultIdentifiers = [];
+
+for(let key in base) {
+  let { version, couch, feeds } = base[key];
+  let name = 'ember-cli-couch';
+  feeds.forEach(feed => {
+    let identifier = key;
+    let fullIdentifier =`${key}-${feed}`;
+    configs[fullIdentifier] = { identifier, version, couch, feed, admin, name };
+    if(feeds[0] === feed) {
+      defaultIdentifiers.push(fullIdentifier);
+    }
+  });
 }
 
-const defaultConfig = configs['couchdb-1.6'];
+const defaultConfig = configs['couchdb-1.6-continuous'];
 
 export const availableIdentifiers = Object.keys(configs);
 
+const getter = (object, name, fn) => Object.defineProperty(object, name, { get: () => fn() });
+
 export default identifier => {
   let config = identifier ? configs[identifier] : defaultConfig;
+  // if(!config) {
+  //   debugger;
+  // }
   assert(`config for identifier ${identifier} not found`, !!config);
   return function(name, options={}) {
     let moduleName = name;

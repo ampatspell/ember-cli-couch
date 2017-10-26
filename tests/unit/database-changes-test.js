@@ -2,7 +2,7 @@ import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import EventSourceFeed from 'couch/couch/changes/feed/unified/event-source';
 
-configurations(module => {
+configurations({ identifiers: [ 'couchdb-1.6-continuous' ] }, module => {
 
   let db;
 
@@ -15,7 +15,7 @@ configurations(module => {
 
   test('database changes is by default disabled, feeds are event source and long polling', function(assert) {
     let changes = db.changes();
-    assert.deepEqual(changes.get('opts.feed'), [ 'event-source', 'long-polling' ]);
+    assert.deepEqual(changes.get('opts.feed'), [ 'continuous', 'event-source', 'long-polling' ]);
     assert.ok(!changes.get('isStarted'));
   });
 

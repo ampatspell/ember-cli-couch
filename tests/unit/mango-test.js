@@ -1,7 +1,7 @@
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 
-configurations({ identifiers: [ 'couchdb-2.1' ] }, module => {
+configurations({ identifiers: [ 'couchdb-2.1-continuous' ] }, module => {
 
   let db;
   let mango;

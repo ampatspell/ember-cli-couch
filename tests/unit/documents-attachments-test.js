@@ -2,7 +2,7 @@ import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import createBlob from 'couch/util/create-blob';
 
-configurations(module => {
+configurations({ defaults: true }, module => {
 
   let db;
 

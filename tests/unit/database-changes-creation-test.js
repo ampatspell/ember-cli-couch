@@ -3,13 +3,15 @@ import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
 import DatabaseChanges from 'couch/couch/database/changes';
 
-configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
+configurations(module => {
 
   let db;
+  let feed;
 
   module('database-changes-creation', {
     async beforeEach() {
       db = this.db;
+      feed = this.config.feed;
       await this.recreate();
     }
   });
@@ -21,6 +23,7 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
     assert.deepEqual(changes.get('opts'), {
       "include_docs": true,
       "feed": [
+        "continuous",
         "event-source",
         "long-polling"
       ]
@@ -28,7 +31,7 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
   });
 
   test('can be started', function(assert) {
-    let changes = db.changes();
+    let changes = db.changes({ feed });
     let data = [];
     changes.on('data', doc => {
       data.push(doc);
@@ -57,13 +60,13 @@ configurations({ identifiers: [ 'couchdb-1.6' ] }, module => {
   });
 
   test('feed default reconnect delay', function(assert) {
-    let changes = db.changes();
+    let changes = db.changes({ feed });
     changes.start();
     assert.equal(changes.get('_feed').opts.reconnect, 3000);
   });
 
   test('feed reconnect delay override', function(assert) {
-    let changes = db.changes({ reconnect: 1000 });
+    let changes = db.changes({ feed, reconnect: 1000 });
     changes.start();
     assert.equal(changes.get('_feed').opts.reconnect, 1000);
   });
