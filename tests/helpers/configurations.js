@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import createModule, { availableIdentifiers } from './create-module-for-db';
+import createModule, { defaultIdentifiers, availableIdentifiers } from './create-module-for-db';
 
 const {
   A
@@ -14,6 +14,10 @@ export default (config, body) => {
 
   if(!config.identifiers) {
     config.identifiers = availableIdentifiers;
+  }
+
+  if(config.defaults) {
+    config.identifiers = defaultIdentifiers;
   }
 
   let identifiers = A(config.identifiers);

@@ -13,8 +13,6 @@ const {
   assert
 } = Ember;
 
-const getter = (object, name, fn) => Object.defineProperty(object, name, { get: () => fn() });
-
 const base = {
   'couchdb-1.6': {
     version: '1.6.1',
@@ -38,14 +36,18 @@ const admin = {
 }
 
 const configs = {};
+export const defaultIdentifiers = [];
 
 for(let key in base) {
   let { version, couch, feeds } = base[key];
   let name = 'ember-cli-couch';
   feeds.forEach(feed => {
-    let additional = feeds[0] !== feed;
     let identifier = key;
-    configs[`${key}-${feed}`] = { identifier, version, couch, feed, additional, admin, name };
+    let fullIdentifier =`${key}-${feed}`;
+    configs[fullIdentifier] = { identifier, version, couch, feed, admin, name };
+    if(feeds[0] === feed) {
+      defaultIdentifiers.push(fullIdentifier);
+    }
   });
 }
 
@@ -53,8 +55,13 @@ const defaultConfig = configs['couchdb-1.6-continuous'];
 
 export const availableIdentifiers = Object.keys(configs);
 
+const getter = (object, name, fn) => Object.defineProperty(object, name, { get: () => fn() });
+
 export default identifier => {
   let config = identifier ? configs[identifier] : defaultConfig;
+  // if(!config) {
+  //   debugger;
+  // }
   assert(`config for identifier ${identifier} not found`, !!config);
   return function(name, options={}) {
     let moduleName = name;
