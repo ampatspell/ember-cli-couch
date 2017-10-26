@@ -1,11 +1,5 @@
-import Feed from '../event-source';
-import withSince from './mixins/with-since';
+import Feed from '../continuous';
+import withSinceSingle from './mixins/with-since-single';
 
-export default class ContinuousFeed extends withSince(Feed) {
-
-  onData(data) {
-    this.since = data.seq;
-    super.onData(data);
-  }
-
+export default class ContinuousFeed extends withSinceSingle(Feed) {
 }

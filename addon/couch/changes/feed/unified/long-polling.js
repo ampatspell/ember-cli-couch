@@ -1,16 +1,16 @@
-import Ember from 'ember';
 import Feed from '../long-polling';
 import withSince from './mixins/with-since';
+import single from './mixins/single';
+import array from './mixins/array';
 
-const {
-  A
-} = Ember;
+export default class LongPollingArrayFeed extends array(single(withSince(Feed))) {
 
-export default class LongPollingFeed extends withSince(Feed) {
-
-  onData(data) {
-    this.since = data.last_seq;
-    A(data.results).forEach(result => super.onData(result));
+  onData(json) {
+    if(json.results) {
+      this.onDataArray(json);
+    } else {
+      this.onDataSingle(json);
+    }
   }
 
 }

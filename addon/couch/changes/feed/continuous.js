@@ -7,6 +7,14 @@ const {
   run: { later, cancel }
 } = Ember;
 
+const safeParse = str => {
+  try {
+    return JSON.parse(str);
+  } catch(err) {
+    return;
+  }
+};
+
 export default class ContinuousFeed extends Feed {
 
   static isSupported() {
@@ -64,41 +72,54 @@ export default class ContinuousFeed extends Feed {
     }, this.opts.reconnect);
   }
 
+  _chunks() {
+    let text = this.xhr.responseText;
+    let value = text.substr(this.len);
+    this.len = text.length;
+    return value.split('\n');
+  }
+
   onOpened() {
   }
 
   onHeadersReceived() {
   }
 
-  get json() {
-    let text = this.xhr.responseText;
-    let value = text.substr(this.len);
-    this.len = text.length;
-    return JSON.parse(value);
+  onHeartbeat() {
   }
 
-  get jsonError() {
-    try {
+  onMessage(chunk) {
+    let json = JSON.parse(chunk);
+    this.onData(json);
+  }
+
+  _errorFromChunk(chunk) {
+    let json = safeParse(chunk);
+    if(json) {
       let status = this.xhr.status;
-      return new Error(merge({ status }, this.json));
-    } catch(nested) {
-      return new Error({ error: 'continuous', reason: 'unknown', nested });
+      return new Error(merge({ status }, json));
     }
+    return new Error({ error: 'continuous', reason: 'unknown' });
   }
 
-  onError() {
-    let err = this.jsonError;
+  onError(chunk) {
+    let err = this._errorFromChunk(chunk);
     super.onError(err);
     this.enqueueRestart();
   }
 
   onLoading() {
     let status = this.xhr.status;
-    if(status === 200) {
-      this.onData(this.json);
-    } else {
-      this.onError();
-    }
+    let chunks = this._chunks();
+    chunks.forEach(chunk => {
+      if(chunk === '') {
+        this.onHeartbeat();
+      } else if(status === 200) {
+        this.onMessage(chunk);
+      } else {
+        this.onError(chunk);
+      }
+    });
   }
 
   onDone() {

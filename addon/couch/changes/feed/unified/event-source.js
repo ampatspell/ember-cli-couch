@@ -1,11 +1,5 @@
 import Feed from '../event-source';
-import withSince from './mixins/with-since';
+import withSinceSingle from './mixins/with-since-single';
 
-export default class EventSourceFeed extends withSince(Feed) {
-
-  onData(data) {
-    this.since = data.seq;
-    super.onData(data);
-  }
-
+export default class EventSourceFeed extends withSinceSingle(Feed) {
 }

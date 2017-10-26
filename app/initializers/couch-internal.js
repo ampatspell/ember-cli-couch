@@ -11,6 +11,7 @@ import Mango from 'couch/couch/database/mango';
 import DatabaseChanges from 'couch/couch/database/changes';
 import CouchChanges from 'couch/couch/changes';
 import ChangesFeedEventSource from 'couch/couch/changes/feed/unified/event-source';
+import ChangesFeedLongPollingArray from 'couch/couch/changes/feed/unified/long-polling-array';
 import ChangesFeedLongPolling from 'couch/couch/changes/feed/unified/long-polling';
 import ChangesFeedContinuous from 'couch/couch/changes/feed/unified/continuous';
 
@@ -29,7 +30,7 @@ export default {
     container.register('couch:database-mango', Mango);
     container.register('couch:database-changes', DatabaseChanges);
     container.register('couch:database-changes/feed/event-source', ChangesFeedEventSource);
-    container.register('couch:database-changes/feed/long-polling', ChangesFeedLongPolling);
+    container.register('couch:database-changes/feed/long-polling', ChangesFeedLongPollingArray);
     container.register('couch:database-changes/feed/continuous', ChangesFeedContinuous);
     container.register('couch:couch-changes', CouchChanges);
     container.register('couch:couch-changes/feed/event-source', ChangesFeedEventSource);
