@@ -1,8 +1,4 @@
-import Ember from 'ember';
-
-const {
-  A
-} = Ember;
+import { A } from '@ember/array';
 
 export default Class => class extends Class {
 

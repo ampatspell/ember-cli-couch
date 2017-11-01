@@ -1,8 +1,4 @@
-import Ember from 'ember';
-
-const {
-  merge
-} = Ember;
+import { merge } from '@ember/polyfills';
 
 export default Superclass => class extends Superclass {
 

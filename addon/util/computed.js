@@ -1,10 +1,6 @@
-import Ember from 'ember';
-
-const {
-  computed,
-  getOwner,
-  A
-} = Ember;
+import { computed } from '@ember/object';
+import { getOwner } from '@ember/application';
+import { A } from '@ember/array';
 
 export const array = () => {
   return computed(function() {

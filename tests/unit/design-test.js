@@ -1,11 +1,8 @@
 /* global emit */
-import Ember from 'ember';
+import { copy } from '@ember/object/internals';
+
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
-
-const {
-  copy
-} = Ember;
 
 configurations({ defaults: true }, module => {
 

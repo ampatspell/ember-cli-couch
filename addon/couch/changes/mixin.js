@@ -1,13 +1,10 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { merge } from '@ember/polyfills';
 import { array } from '../../util/computed';
 import { destroyArray } from '../../util/destroy'
 import { defaultFeedIdentifiers } from './changes';
 
-const {
-  merge
-} = Ember;
-
-export default Ember.Mixin.create({
+export default Mixin.create({
 
   openChanges: array(),
 

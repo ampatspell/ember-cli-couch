@@ -1,18 +1,14 @@
-import Ember from 'ember';
+import { getOwner } from '@ember/application';
+import EmberObject, { computed } from '@ember/object';
+import { assert } from '@ember/debug';
+import { merge } from '@ember/polyfills';
+import { typeOf } from '@ember/utils';
+import { all, resolve } from 'rsvp';
+import { A } from '@ember/array';
 import createFileLoader from '../util/file-loader/create';
 import toBase64 from '../util/base64';
 import stringifyUnlessEmpty from '../util/stringify-unless-empty';
 import ChangesMixin from './changes/mixin';
-
-const {
-  getOwner,
-  computed,
-  assert,
-  merge,
-  typeOf,
-  RSVP: { resolve, all },
-  A
-} = Ember;
 
 const lookup = name => {
   return computed(function() {
@@ -20,7 +16,7 @@ const lookup = name => {
   }).readOnly();
 };
 
-export default Ember.Object.extend(ChangesMixin, {
+export default EmberObject.extend(ChangesMixin, {
 
   couch: null,
   name: null,

@@ -1,9 +1,5 @@
-import Ember from 'ember';
+import { resolve } from 'rsvp';
 import blobutil from './blob-util';
-
-const {
-  RSVP: { resolve }
-} = Ember;
 
 export default string => {
   return resolve().then(() => {

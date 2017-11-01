@@ -1,9 +1,5 @@
-import Ember from 'ember';
-
-const {
-  isNone,
-  A
-} = Ember;
+import { isNone } from '@ember/utils';
+import { A } from '@ember/array';
 
 const objectToQueryString = obj => {
   if(!obj) {

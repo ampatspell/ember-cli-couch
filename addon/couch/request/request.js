@@ -1,14 +1,11 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { reject } from 'rsvp';
+import { merge } from '@ember/polyfills';
 import fetch from 'fetch';
 import SofaError from '../../util/error';
 import composeURL from '../../util/compose-url';
 import wrap from '../../util/wrap-promise';
 import { next } from '../../util/run';
-
-const {
-  RSVP: { reject },
-  merge
-} = Ember;
 
 const raw = opts => {
   let url = opts.url;
@@ -69,7 +66,7 @@ const request = opts => {
   return ajax(opts);
 }
 
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   send(opts) {
     return request(opts).then(result => next().then(() => result));

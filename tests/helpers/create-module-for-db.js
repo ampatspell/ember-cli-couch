@@ -1,5 +1,7 @@
+import { run } from '@ember/runloop';
+import { resolve } from 'rsvp';
+import { assert } from '@ember/debug';
 import { module } from 'qunit';
-import Ember from 'ember';
 import startApp from '../helpers/start-app';
 import destroyApp from '../helpers/destroy-app';
 import environment from '../../config/environment';
@@ -7,11 +9,6 @@ import environment from '../../config/environment';
 const {
   COUCHDB_HOST
 } = environment;
-
-const {
-  RSVP: { resolve },
-  assert
-} = Ember;
 
 const base = {
   'couchdb-1.6': {
@@ -94,10 +91,10 @@ export default identifier => {
       afterEach() {
         let afterEach = options.afterEach && options.afterEach.apply(this, arguments);
         return resolve(afterEach).then(() => {
-          Ember.run(() => this.instance.destroy());
+          run(() => this.instance.destroy());
           destroyApp(this.application);
         });
       }
     });
-  }
+  };
 }

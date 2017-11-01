@@ -1,12 +1,9 @@
-import Ember from 'ember';
+import Service from '@ember/service';
+import { getOwner } from '@ember/application';
 import { object } from './util/computed';
 import { destroyObject } from './util/destroy';
 
-const {
-  getOwner
-} = Ember;
-
-export default Ember.Service.extend({
+export default Service.extend({
 
   openCouches: object().readOnly(),
 

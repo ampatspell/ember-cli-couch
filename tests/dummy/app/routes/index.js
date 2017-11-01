@@ -1,10 +1,7 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
+import { reject, hash } from 'rsvp';
 
-const {
-  RSVP: { hash, reject }
-} = Ember;
-
-export default Ember.Route.extend({
+export default Route.extend({
 
   insertMessage() {
     let db = this.get('db');

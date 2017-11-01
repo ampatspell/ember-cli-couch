@@ -1,10 +1,6 @@
-import Ember from 'ember';
+import { cancel, later } from '@ember/runloop';
 import Feed from './feed';
 import Error from '../../../util/error';
-
-const {
-  run: { later, cancel }
-} = Ember;
 
 export default class EventSourceFeed extends Feed {
 

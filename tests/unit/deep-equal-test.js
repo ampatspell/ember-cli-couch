@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { resolve } from 'rsvp';
 import module from '../helpers/module-for-db';
 import { test } from '../helpers/qunit';
 import buildDeepEqual from 'couch/util/deep-equal';
-
-const {
-  RSVP: { resolve }
-} = Ember;
 
 let eq;
 
@@ -38,7 +35,7 @@ test('object', function(assert) {
 });
 
 test('ember object', function(assert) {
-  let object = Ember.Object.create();
+  let object = EmberObject.create();
   return resolve().then(() => {
     eq(object, object);
   }).then(() => {
@@ -53,7 +50,7 @@ test('ember object', function(assert) {
 
 test('ember object with allowEmberObjects:true', function(assert) {
   eq = buildDeepEqual({ allowEmberObjects: true });
-  let object = Ember.Object.create();
+  let object = EmberObject.create();
   assert.ok(eq(object, object));
-  assert.ok(!eq(Ember.Object.create(), Ember.Object.create()));
+  assert.ok(!eq(EmberObject.create(), EmberObject.create()));
 });

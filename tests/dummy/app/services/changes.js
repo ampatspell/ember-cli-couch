@@ -1,13 +1,9 @@
-import Ember from 'ember';
+import Service, { inject as service } from '@ember/service';
+import { reads, bool } from '@ember/object/computed';
+import { on } from '@ember/object/evented';
 import { array } from 'couch/util/computed';
 
-const {
-  inject: { service },
-  computed: { bool, reads },
-  on,
-} = Ember;
-
-export default Ember.Service.extend({
+export default Service.extend({
 
   db: service(),
   session: reads('db.couch.session'),

@@ -1,9 +1,5 @@
-import Ember from 'ember';
-
-const {
-  isEmpty,
-  A
-} = Ember;
+import { isEmpty } from '@ember/utils';
+import { A } from '@ember/array';
 
 let _raw = {
   'png':  'image/png',

@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { all } from 'rsvp';
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
-
-const {
-  RSVP: { all }
-} = Ember;
 
 configurations(module => {
 

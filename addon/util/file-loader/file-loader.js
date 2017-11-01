@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { reject } from 'rsvp';
 import blobutil from '../blob-util';
 import Error from '../error';
 import lookupContentType from './content-type';
-
-const {
-  RSVP: { reject }
-} = Ember;
 
 export default class FileLoader {
 

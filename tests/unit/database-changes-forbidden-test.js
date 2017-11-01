@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { wait } from '../helpers/run';
-
-const {
-  A
-} = Ember;
 
 configurations(module => {
 

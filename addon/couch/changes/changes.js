@@ -1,14 +1,10 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { getOwner } from '@ember/application';
+import Evented from '@ember/object/evented';
+import { merge } from '@ember/polyfills';
+import { A, isArray } from '@ember/array';
 import assert from '../../util/assert';
 import { isFastBoot } from '../../util/computed';
-
-const {
-  getOwner,
-  Evented,
-  merge,
-  isArray,
-  A
-} = Ember;
 
 export const defaultFeedIdentifiers = [ 'continuous', 'event-source', 'long-polling' ];
 
@@ -21,7 +17,7 @@ const inBrowser = fn => {
   };
 }
 
-export default Ember.Object.extend(Evented, {
+export default EmberObject.extend(Evented, {
 
   _isFastBoot: isFastBoot(),
 

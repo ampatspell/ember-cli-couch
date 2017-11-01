@@ -1,12 +1,8 @@
-import Ember from 'ember';
+import { gt } from '@ember/object/computed';
+import { cancel, next } from '@ember/runloop';
 import Changes from './changes';
 import { array } from '../../util/computed';
 import assert from '../../util/assert';
-
-const {
-  computed: { gt },
-  run: { next, cancel }
-} = Ember;
 
 export default Changes.extend({
 

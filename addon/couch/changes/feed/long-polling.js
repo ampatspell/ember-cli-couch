@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { cancel, later, next } from '@ember/runloop';
+import { resolve } from 'rsvp';
+import { merge } from '@ember/polyfills';
 import Feed from './feed';
-
-const {
-  run: { next, later, cancel },
-  RSVP: { resolve },
-  merge
-} = Ember;
 
 const delayed = 'delayed';
 const immediate = 'immediate';
