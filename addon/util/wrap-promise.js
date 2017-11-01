@@ -1,8 +1,4 @@
-import Ember from 'ember';
-
-const {
-  RSVP: { resolve, reject }
-} = Ember;
+import { reject, resolve } from 'rsvp';
 
 export default promise => {
   return resolve(promise).then(res => resolve(res), err => reject(err));

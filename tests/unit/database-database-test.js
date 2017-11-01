@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { resolve } from 'rsvp';
 import configurations from '../helpers/configurations';
 import { test } from '../helpers/qunit';
 import { later } from 'couch/util/run';
-
-const {
-  RSVP: { resolve }
-} = Ember;
 
 configurations({ defaults: true }, module => {
 

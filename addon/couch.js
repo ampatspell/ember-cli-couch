@@ -1,13 +1,9 @@
-import Ember from 'ember';
+import EmberObject, { computed } from '@ember/object';
+import { getOwner } from '@ember/application';
 import { object } from './util/computed';
 import { destroyObject } from './util/destroy';
 import Changes from './couch/changes/mixin';
 import Request from './couch/request/mixin';
-
-const {
-  computed,
-  getOwner
-} = Ember;
 
 const normalizedUrl = () => {
   return computed('url', function() {
@@ -28,7 +24,7 @@ const session = () => {
   }).readOnly();
 };
 
-export default Ember.Object.extend(
+export default EmberObject.extend(
   Changes,
   Request, {
 

@@ -1,14 +1,10 @@
-import Ember from 'ember';
 import { registerDatabaseServices } from 'couch';
 import environment from '../config/environment';
+import { info } from 'couch/util/logger';
 
 const {
   COUCHDB_HOST
 } = environment;
-
-const {
-  Logger: { info }
-} = Ember;
 
 export default {
   name: 'dummy:dev',

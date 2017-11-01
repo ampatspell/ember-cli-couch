@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
+import { error } from 'couch/util/logger';
 
-const {
-  Logger: { error },
-  inject: { service }
-} = Ember;
-
-export default Ember.Route.extend({
+export default Route.extend({
 
   changes: service(),
 

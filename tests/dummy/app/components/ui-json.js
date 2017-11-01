@@ -1,10 +1,7 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { computed } from '@ember/object';
 
-const {
-  computed
-} = Ember;
-
-export default Ember.Component.extend({
+export default Component.extend({
   classNameBindings: [ ':ui-json' ],
 
   data: null,

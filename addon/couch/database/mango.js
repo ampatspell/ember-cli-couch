@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { merge } from '@ember/polyfills';
+import { warn } from '../../util/logger';
 
-const {
-  merge,
-  Logger: { warn }
-} = Ember;
-
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   database: null,
 

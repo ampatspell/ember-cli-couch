@@ -1,16 +1,13 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { merge } from '@ember/polyfills';
+import { typeOf } from '@ember/utils';
+import { reject } from 'rsvp';
 import buildDeepEqual from '../../util/deep-equal';
 
 const deepEqual = buildDeepEqual({ allowEmberObjects: false });
 const functionRegex = /^(?:function)?(?:\s*)(?:\w*)(?:\s*)(\([\w,\s]*\))(?:\s*)([\S\s]*)(?:\w*)$/i;
 
-const {
-  merge,
-  typeOf,
-  RSVP: { reject }
-} = Ember;
-
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   database: null,
 

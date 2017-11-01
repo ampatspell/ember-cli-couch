@@ -1,12 +1,9 @@
-import Ember from 'ember';
+import Mixin from '@ember/object/mixin';
+import { getOwner } from '@ember/application';
+import { computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
 import isAbsoluteURL from '../../util/is-absolute-url';
 import { fastboot } from '../../util/computed';
-
-const {
-  getOwner,
-  computed,
-  computed: { reads }
-} = Ember;
 
 const request = () => {
   return computed(function() {
@@ -20,7 +17,7 @@ const isFastBoot = () => {
 
 const AuthSession = 'AuthSession';
 
-export default Ember.Mixin.create({
+export default Mixin.create({
 
   __request: request(),
   _fastboot: fastboot(),

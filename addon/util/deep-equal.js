@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { isArray } from '@ember/array';
+import { typeOf } from '@ember/utils';
+import { merge } from '@ember/polyfills';
 import CouchError from './error';
-
-const {
-  isArray,
-  typeOf,
-  merge
-} = Ember;
 
 export class DeepEqual {
 

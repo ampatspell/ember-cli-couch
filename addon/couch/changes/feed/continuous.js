@@ -1,11 +1,7 @@
-import Ember from 'ember';
+import { merge } from '@ember/polyfills';
+import { cancel, later } from '@ember/runloop';
 import Feed from './feed';
 import Error from '../../../util/error';
-
-const {
-  merge,
-  run: { later, cancel }
-} = Ember;
 
 const safeParse = str => {
   try {

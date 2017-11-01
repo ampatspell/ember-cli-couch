@@ -1,9 +1,6 @@
-import Ember from 'ember';
-
-const {
-  merge,
-  A
-} = Ember;
+import EmberError from '@ember/error';
+import { merge } from '@ember/polyfills';
+import { A } from '@ember/array';
 
 function message(opts) {
   opts = opts || {};
@@ -19,11 +16,11 @@ function message(opts) {
 }
 
 export function BaseError(opts) {
-  Ember.Error.call(this, message(opts));
+  EmberError.call(this, message(opts));
   merge(this, opts);
 }
 
-BaseError.prototype = Object.create(Ember.Error.prototype);
+BaseError.prototype = Object.create(EmberError.prototype);
 
 BaseError.prototype.toJSON = function() {
   let { status, error, reason, id } = this;
@@ -45,11 +42,11 @@ BaseError.prototype.toJSON = function() {
 };
 
 export function BaseErrors(array) {
-  Ember.Error.call(this, 'Multiple errors');
+  EmberError.call(this, 'Multiple errors');
   this.errors = array;
 }
 
-BaseErrors.prototype = Object.create(Ember.Error.prototype);
+BaseErrors.prototype = Object.create(EmberError.prototype);
 
 BaseErrors.prototype.toJSON = function() {
   let { message, errors } = this;

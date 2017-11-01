@@ -1,9 +1,5 @@
-import Ember from 'ember';
-
-const {
-  RSVP: { Promise },
-  run
-} = Ember;
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
 
 export const wait = (arg, delay) => new Promise(resolve => run.later(() => resolve(arg), delay));
 

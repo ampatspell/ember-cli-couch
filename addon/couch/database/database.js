@@ -1,13 +1,10 @@
-import Ember from 'ember';
-
-const {
-  merge,
-  RSVP: { reject, map },
-  assert
-} = Ember;
+import EmberObject from '@ember/object';
+import { merge } from '@ember/polyfills';
+import { map, reject } from 'rsvp';
+import { assert } from '@ember/debug';
 
 
-export default Ember.Object.extend({
+export default EmberObject.extend({
 
   database: null,
 

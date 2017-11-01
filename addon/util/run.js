@@ -1,9 +1,5 @@
-import Ember from 'ember';
-
-const {
-  RSVP: { Promise },
-  run
-} = Ember;
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
 
 export function next() {
   return new Promise(resolve => {

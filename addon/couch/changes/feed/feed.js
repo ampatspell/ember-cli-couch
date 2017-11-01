@@ -1,9 +1,5 @@
-import Ember from 'ember';
+import { merge } from '@ember/polyfills';
 import composeURL from '../../../util/compose-url';
-
-const {
-  merge
-} = Ember;
 
 /*
 
