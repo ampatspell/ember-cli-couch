@@ -34,13 +34,13 @@ configurations(module => {
   });
 
   test('listen for changes', function(assert) {
-    let changes = db.changes({ feed, view: 'changes/only-things' });
+    let changes = db.changes({ feed, view: 'changes/only-things', timeout: 2000 });
     let data = [];
     changes.on('data', doc => {
       data.push(doc);
     });
     changes.start();
-    return wait(null, 1500).then(() => {
+    return wait(null, 500).then(() => {
       return all([
         db.save({ _id: 'foo', type: 'thing' }),
         db.save({ _id: 'bar', type: 'duck' })
@@ -48,7 +48,7 @@ configurations(module => {
     }).then(([ foo ]) => {
       return db.save({ _id: 'foo', _rev: foo.rev, _deleted: true, type: 'thing' });
     }).then(() => {
-      return wait(null, 1500);
+      return wait(null, 500);
     }).then(() => {
       assert.deepEqual_(data.map(row => row.doc), [
         {

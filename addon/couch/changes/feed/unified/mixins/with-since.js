@@ -24,4 +24,8 @@ export default Superclass => class extends Superclass {
     return { since: this.since };
   }
 
+  onSince(seq) {
+    this.since = seq;
+  }
+
 }
