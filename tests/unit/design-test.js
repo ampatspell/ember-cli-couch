@@ -18,8 +18,21 @@ configurations({ defaults: true }, module => {
       roles: ['a', 'b']
     },
     views: {
-      all: {
-        map: function(doc) { emit(doc._id, null); }
+      clean: {
+        map(doc) { emit(doc._id, null); }
+      },
+      func: {
+        map: function (doc) { emit(doc._id, null); }
+      },
+      named: {
+        map: function map (doc) { emit(doc._id, null); }
+      },
+      nested: {
+        map(doc) {
+          if(doc.type) {
+            emit(doc.type);
+          }
+        }
       }
     }
   };
@@ -55,8 +68,17 @@ configurations({ defaults: true }, module => {
           "roles": ["a", "b"]
         },
         "views": {
-          "all": {
+          "clean": {
             "map": "function(doc) {\n            emit(doc._id, null);\n          }"
+          },
+          "func": {
+            "map": "function(doc) {\n            emit(doc._id, null);\n          }"
+          },
+          "named": {
+            "map": "function(doc) {\n            emit(doc._id, null);\n          }"
+          },
+          "nested": {
+            "map": "function(doc) {\n            if (doc.type) {\n              emit(doc.type);\n            }\n          }"
           }
         }
       });
