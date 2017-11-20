@@ -62,6 +62,14 @@ export default function(Error) {
     isArray_(`${key} must be array`, value);
   }
 
+  function isBoolean_(message, value) {
+    assert(message, typeOf(value) === 'boolean');
+  }
+
+  function isBoolean(key, value) {
+    isBoolean_(`${key} must be boolean`, value);
+  }
+
   function isOneOf(key, value, values) {
     assert(`${key} must be one of [${values.join(', ')}]`, values.indexOf(value) !== -1);
   }
@@ -80,6 +88,8 @@ export default function(Error) {
     isFunction,
     isArray_,
     isArray,
+    isBoolean_,
+    isBoolean,
     isOneOf
   };
 }
