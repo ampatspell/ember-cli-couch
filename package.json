@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-couch",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "CouchDB API for Ember.js",
   "keywords": [
     "ember-addon",
