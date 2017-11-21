@@ -15,6 +15,10 @@ let {
   isFunction,
   isArray_,
   isArray,
+  isArrayProxy_,
+  isArrayProxy,
+  isArrayOrArrayProxy_,
+  isArrayOrArrayProxy,
   isBoolean_,
   isBoolean,
   isOneOf
@@ -34,6 +38,10 @@ export {
   isFunction,
   isArray_,
   isArray,
+  isArrayProxy_,
+  isArrayProxy,
+  isArrayOrArrayProxy_,
+  isArrayOrArrayProxy,
   isBoolean_,
   isBoolean,
   isOneOf

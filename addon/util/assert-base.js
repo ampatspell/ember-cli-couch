@@ -1,4 +1,5 @@
 import { typeOf } from '@ember/utils';
+import ArrayProxy from '@ember/array/proxy';
 
 export default function(Error) {
 
@@ -54,12 +55,32 @@ export default function(Error) {
     isFunction_(`${key} must be function`, value);
   }
 
+  const _isArray = value => typeOf(value) === 'array';
+
   function isArray_(message, value) {
-    assert(message, typeOf(value) === 'array');
+    assert(message, _isArray(value));
   }
 
   function isArray(key, value) {
     isArray_(`${key} must be array`, value);
+  }
+
+  const _isArrayProxy = value => ArrayProxy.detectInstance(value);
+
+  function isArrayProxy_(message, value) {
+    assert(message, _isArrayProxy(value));
+  }
+
+  function isArrayProxy(key, value) {
+    isArrayProxy_(`${key} must be array proxy`, value);
+  }
+
+  function isArrayOrArrayProxy_(message, value) {
+    assert(message, _isArray(value) || _isArrayProxy(value));
+  }
+
+  function isArrayOrArrayProxy(key, value) {
+    isArrayOrArrayProxy_(`${key} must be array or array proxy`, value);
   }
 
   function isBoolean_(message, value) {
@@ -88,6 +109,10 @@ export default function(Error) {
     isFunction,
     isArray_,
     isArray,
+    isArrayProxy_,
+    isArrayProxy,
+    isArrayOrArrayProxy_,
+    isArrayOrArrayProxy,
     isBoolean_,
     isBoolean,
     isOneOf
