@@ -39,6 +39,14 @@ export default function(Error) {
     isObject_(`${key} must be object`, value);
   }
 
+  function isInstance_(message, value) {
+    assert(message, typeOf(value) === 'instance');
+  }
+
+  function isInstance(key, value) {
+    isInstance_(`${key} must be ember object instance`, value);
+  }
+
   function isClass_(message, value) {
     assert(message, typeOf(value) === 'class');
   }
@@ -103,6 +111,8 @@ export default function(Error) {
     isString,
     isObject_,
     isObject,
+    isInstance_,
+    isInstance,
     isClass_,
     isClass,
     isFunction_,
