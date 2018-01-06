@@ -56,7 +56,7 @@ export default function(Error) {
   }
 
   function isFunction_(message, value) {
-    assert(message, typeOf(value) === 'function');
+    assert(message, typeof value === 'function');
   }
 
   function isFunction(key, value) {
